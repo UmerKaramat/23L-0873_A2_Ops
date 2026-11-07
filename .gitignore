@@ -1,0 +1,148 @@
+# ==============================================================================
+# VisionGuard .gitignore
+# MLOps Assignment 2: AI vs Real Image Classification and Deployment
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 1. Python Artifacts & Bytecode Cache
+# ------------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# ------------------------------------------------------------------------------
+# 2. Virtual Environments
+# ------------------------------------------------------------------------------
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# ------------------------------------------------------------------------------
+# 3. Environment Variables & Secrets
+# ------------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+secrets.yaml
+credentials.json
+*.pem
+*.key
+*.cert
+
+# ------------------------------------------------------------------------------
+# 4. Jupyter Notebooks Checkpoints & Temporary Files
+# ------------------------------------------------------------------------------
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+*.ipynb[nbconvert]
+
+# ------------------------------------------------------------------------------
+# 5. OS and Editor Temporary Files
+# ------------------------------------------------------------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+*.tmp
+*.bak
+*.swp
+*~
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# ------------------------------------------------------------------------------
+# 6. Testing & Quality Assurance
+# ------------------------------------------------------------------------------
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+*.cover
+*.py,cover
+
+# ------------------------------------------------------------------------------
+# 7. MLflow & Experiment Tracking (Local Runs)
+# ------------------------------------------------------------------------------
+mlruns/
+mlartifacts/
+.mlflow/
+
+# ------------------------------------------------------------------------------
+# 8. Data Files (Tracked by DVC, NOT Git)
+# ------------------------------------------------------------------------------
+# Ignore all raw, processed, and split image dataset contents
+data/raw/*
+data/processed/*
+data/splits/*
+
+# Preserve empty directory structure in Git
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!data/splits/.gitkeep
+
+# CRITICAL DVC REQUIREMENT:
+# DVC creates *.dvc pointer files and local .gitignore files inside data directories.
+# These metadata and pointer files MUST be committed to Git.
+!data/**/.gitignore
+!data/**/*.dvc
+!data/**/*.dvcignore
+
+# ------------------------------------------------------------------------------
+# 9. Large Model Weights & Checkpoints (Tracked by DVC, NOT Git)
+# ------------------------------------------------------------------------------
+models/*
+!models/.gitkeep
+!models/**/.gitignore
+!models/**/*.dvc
+
+# Large model binary extensions across the workspace
+*.h5
+*.keras
+*.tflite
+*.onnx
+*.pt
+*.pth
+*.pkl
+*.joblib
+*.pb
+
+# ------------------------------------------------------------------------------
+# 10. DVC Internal Cache & Pipelines
+# ------------------------------------------------------------------------------
+# DVC internal cache and temporary storage (never commit data cache to Git)
+.dvc/cache/
+.dvc/tmp/
+.dvc/config.local
+
+# Whitelist DVC configuration, pipeline definitions, lockfiles, and pointer files
+!dvc.yaml
+!dvc.lock
+!.dvcignore
+!*.dvc
+!.dvc/config
+!.dvc/.gitignore

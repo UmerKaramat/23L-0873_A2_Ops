@@ -1,0 +1,79 @@
+{
+    "dataset_path": "D:\\VisionGuard\\data\\raw",
+    "total_files_audited": 973,
+    "valid_images": 973,
+    "corrupt_images": 0,
+    "non_image_files": 0,
+    "duplicate_extra_copies": 1,
+    "unique_sha256_hashes": 972,
+    "classes_identified": [
+        "AI",
+        "Real"
+    ],
+    "per_class_summary": {
+        "AI": {
+            "total_files": 538,
+            "valid_images": 538,
+            "corrupt_images": 0,
+            "non_image_files": 0,
+            "duplicate_extra_copies": 1,
+            "width_px": {
+                "min": 225.0,
+                "median": 1028.5,
+                "max": 6000.0
+            },
+            "height_px": {
+                "min": 135.0,
+                "median": 800.0,
+                "max": 4001.0
+            },
+            "file_size_kb": {
+                "min": 11.46,
+                "median": 195.12,
+                "max": 5494.32
+            },
+            "formats_detected": {
+                "JPEG": 428,
+                "PNG": 110
+            },
+            "color_modes_detected": {
+                "RGB": 488,
+                "RGBA": 35,
+                "P": 14,
+                "L": 1
+            }
+        },
+        "Real": {
+            "total_files": 435,
+            "valid_images": 435,
+            "corrupt_images": 0,
+            "non_image_files": 0,
+            "duplicate_extra_copies": 0,
+            "width_px": {
+                "min": 183.0,
+                "median": 940.0,
+                "max": 8495.0
+            },
+            "height_px": {
+                "min": 158.0,
+                "median": 720.0,
+                "max": 7091.0
+            },
+            "file_size_kb": {
+                "min": 11.05,
+                "median": 141.58,
+                "max": 9956.4
+            },
+            "formats_detected": {
+                "JPEG": 402,
+                "PNG": 33
+            },
+            "color_modes_detected": {
+                "RGB": 406,
+                "RGBA": 14,
+                "P": 9,
+                "L": 6
+            }
+        }
+    }
+}

@@ -1,4 +1,4 @@
 [core]
-    remote = origin
-['remote "origin"']
-    url = https://dagshub.com/umerkaramat45/23L-0873_A2_Ops.dvc
+    remote = local_origin
+['remote "local_origin"']
+    url = D:\VisionGuard_Remote

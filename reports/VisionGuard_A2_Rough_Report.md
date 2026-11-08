@@ -431,14 +431,31 @@
 
 ## Task 4: Flask Web Application
 
-### Subtask 4.1: Flask Core Application and HTML/CSS Interface
+### Subtask 4.1: Production Inference Module & Singleton Engine
+- **Objective:** Build an optimized in-memory inference service (`src/models/inference.py`):
+  - Load `models/champion.keras` **exactly once** using a Singleton class (`ChampionModelSingleton`) so the model persists in RAM across web requests.
+  - Implement `predict_image(image_bytes)` accepting raw binary image payloads.
+  - Image preprocessing: decode to RGB, bilinear resize to 224x224, normalize pixel values by dividing by 255.0.
+  - Output format: returns dictionary containing predicted label (`"Real"` or `"AI-Generated"`) and confidence percentage.
+- **Execution Command:**
+  ```powershell
+  python scripts/run_task4_1.py
+  ```
+- **Inference Verification Evidence:**
+  - *Figure 4.1a:* Terminal execution of `scripts/run_task4_1.py`
+    ```text
+    ![Figure 4.1a: Inference verification output](figures/task4_1_inference_test.png)
+    ```
+    *Caption:* Output of `scripts/run_task4_1.py` demonstrating in-memory Singleton model loading and successful predictions on sample AI and Real image bytes.
+
+### Subtask 4.2: Flask Core Application and HTML/CSS Interface
 - **Objective:** Develop a clean Flask web application with custom HTML/CSS user interface served via Jinja2 templates.
 - **Details & Observations:**
   - `[Document Flask application structure, template inheritance, static CSS styling, and responsive layout]`
 - **Screenshots & Evidence:**
-  - *Figure 4.1:* Flask application interface
+  - *Figure 4.2:* Flask application interface
     ```text
-    ![Figure 4.1: Flask web UI](figures/task4_1_flask_ui.png)
+    ![Figure 4.2: Flask web UI](figures/task4_1_flask_ui.png)
     ```
     *Caption:* Web UI rendered by Flask showing upload interface and navigation bar.
 

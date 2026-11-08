@@ -6,6 +6,10 @@ from src.models.custom_cnn import (
     build_custom_cnn,
     export_model_summary_to_csv,
 )
+from src.models.inference import (
+    ChampionModelSingleton,
+    predict_image,
+)
 from src.models.transfer_model import (
     build_transfer_model,
     plot_combined_transfer_curves,
@@ -20,4 +24,6 @@ __all__ = [
     "unfreeze_for_fine_tuning",
     "print_trainable_layer_status",
     "plot_combined_transfer_curves",
+    "ChampionModelSingleton",
+    "predict_image",
 ]

@@ -350,7 +350,35 @@
     ```
     *Caption:* DagsHub MLflow dashboard showing `Task_3_3_VisionGuard_Tracking` comparing `Manual_Logging` and `TF_Autologging` runs with tags, metrics, and models.
 
-### Subtask 3.4: Execution and Tracking of Six Distinct Experiments
+### Subtask 3.4: Multi-Artifact Logging to DagsHub MLflow
+- **Objective:** Generate and log multi-type artifacts to the DagsHub MLflow remote server under experiment `Task_3_4_Artifacts`:
+  - Test set Confusion Matrix plot (`task3_4_cm.png`)
+  - Test set ROC Curve plot with AUC (`task3_4_roc.png`)
+  - Dataset split manifest with file paths (`task3_4_split_lists.txt`)
+  - Environment package versions captured via `pip freeze` (`task3_4_packages.txt`)
+  - Trained Keras model logged via `mlflow.keras.log_model()`
+- **Execution Command:**
+  ```powershell
+  python scripts/run_task3_4_artifacts.py --subsample 400 --epochs 1
+  ```
+- **Screenshots & Evidence:**
+  - *Figure 3.4a:* Test set Confusion Matrix artifact
+    ```text
+    ![Figure 3.4a: Confusion Matrix](figures/task3_4_cm.png)
+    ```
+    *Caption:* Evaluation Confusion Matrix logged as an artifact to DagsHub MLflow.
+  - *Figure 3.4b:* Test set ROC Curve artifact
+    ```text
+    ![Figure 3.4b: ROC Curve](figures/task3_4_roc.png)
+    ```
+    *Caption:* Evaluation ROC Curve with AUC metric logged as an artifact to DagsHub MLflow.
+  - *Figure 3.4c:* DagsHub MLflow artifact explorer
+    ```text
+    ![Figure 3.4c: DagsHub MLflow artifact explorer](figures/task3_4_dagshub_artifacts.png)
+    ```
+    *Caption:* DagsHub MLflow UI showing all uploaded artifacts (plots, manifests, environment packages, and serialized model).
+
+### Subtask 3.5: Execution and Tracking of Six Distinct Experiments
 - **Objective:** Systematically track, compare, and log at least six distinct experimental runs in MLflow on DagsHub.
 - **Six Experiments Summary Table:**
   | Run # | Experiment Name / Configuration | Key Hyperparameters / Model Variant | Test Accuracy | Test F1-Score | MLflow Run ID |
@@ -363,31 +391,20 @@
   | **6** | Tuned Transfer Learning / Alternative Backbone | `[TBD: regularization, optimizer]` | `[TBD]` | `[TBD]` | `[TBD]` |
 
 - **Screenshots & Evidence:**
-  - *Figure 3.2:* MLflow experiment dashboard with all six runs
+  - *Figure 3.5:* MLflow experiment dashboard with all six runs
     ```text
-    ![Figure 3.2: Six experiments in MLflow dashboard](figures/task3_2_six_runs.png)
+    ![Figure 3.5: Six experiments in MLflow dashboard](figures/task3_5_six_runs.png)
     ```
     *Caption:* MLflow dashboard comparing parameters, loss curves, and evaluation metrics across all six runs.
 
-### Subtask 3.3: Artifact Logging and Visualization
-- **Objective:** Log training plots, confusion matrices, ROC curves, architecture summaries, and model binaries as artifacts in MLflow.
-- **Details & Observations:**
-  - `[Document logged artifact directory structure, serialized model formats (.keras / .h5), and metric histories]`
-- **Screenshots & Evidence:**
-  - *Figure 3.3:* Logged artifacts in MLflow
-    ```text
-    ![Figure 3.3: MLflow logged artifacts](figures/task3_3_artifacts.png)
-    ```
-    *Caption:* MLflow artifact browser displaying logged plots, metrics JSON, and serialized model files.
-
-### Subtask 3.4: MLflow Model Registry
+### Subtask 3.6: MLflow Model Registry
 - **Objective:** Register the best performing model from the six experiments into the MLflow Model Registry, assign versioning, and set model stage.
 - **Details & Observations:**
   - `[Document registered model name, version tag, transition to Staging/Production, and model metadata]`
 - **Screenshots & Evidence:**
-  - *Figure 3.4:* MLflow Model Registry dashboard
+  - *Figure 3.6:* MLflow Model Registry dashboard
     ```text
-    ![Figure 3.4: Registered model in MLflow](figures/task3_4_model_registry.png)
+    ![Figure 3.6: Registered model in MLflow](figures/task3_6_model_registry.png)
     ```
     *Caption:* MLflow Model Registry displaying the production-tagged VisionGuard classification model.
 

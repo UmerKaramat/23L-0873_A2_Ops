@@ -1,0 +1,7 @@
+Run #,Run Name,Model Type,Controlled Change,LR,Augmentation,Image Size,Backbone,Val Loss,Val Accuracy,MLflow Run ID
+1,Run_1_Baseline_CNN,Custom_CNN,"Baseline: Custom CNN, LR=1e-3, Aug=True, 224x224",1e-03,True,224x224,None (Scratch),0.6946,0.4800,c2dc9526e7044cb1a96751db2ec28d4d
+2,Run_2_LR_1e4,Custom_CNN,Controlled Change: Lower Learning Rate (1e-4 vs 1e-3),1e-04,True,224x224,None (Scratch),0.6935,0.4800,638e01fe77844992a36a93517b7d1c39
+3,Run_3_No_Augmentation,Custom_CNN,Controlled Change: Data Augmentation Disabled,1e-03,False,224x224,None (Scratch),0.6914,0.5300,a516dfb770f644389f5a2639717155dd
+4,Run_4_Size_128,Custom_CNN,Controlled Change: Reduced Image Resolution (128x128 vs 224x224),1e-03,True,128x128,None (Scratch),0.6898,0.4600,c973d5e80d9242bf891c37b5bf065e81
+5,Run_5_MobileNet_Frozen,MobileNetV2_Transfer,Controlled Change: Transfer Learning Backbone (Feature Extraction),1e-03,True,224x224,MobileNetV2,0.6886,0.6700,02bcb53a1d52497ab029d4bb71f2da69
+6,Run_6_MobileNet_Unfrozen,MobileNetV2_Transfer,Controlled Change: Fine-Tuning with Top 30 Backbone Layers Unfrozen,1e-04,True,224x224,MobileNetV2,0.7005,0.6100,1e95af5cec204549ad5c2af22d6ac1ae

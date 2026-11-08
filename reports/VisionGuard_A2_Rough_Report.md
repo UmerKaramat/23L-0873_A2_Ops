@@ -379,23 +379,27 @@
     *Caption:* DagsHub MLflow UI showing all uploaded artifacts (plots, manifests, environment packages, and serialized model).
 
 ### Subtask 3.5: Execution and Tracking of Six Distinct Experiments
-- **Objective:** Systematically track, compare, and log at least six distinct experimental runs in MLflow on DagsHub.
+- **Objective:** Systematically track, compare, and log six distinct experimental runs in MLflow on DagsHub representing controlled variations (learning rate, data augmentation, image resolution, pre-trained backbone, and unfreezing fine-tuning):
+- **Execution Command:**
+  ```powershell
+  python scripts/run_task3_5_compare.py --train-subsample 300 --val-subsample 100
+  ```
 - **Six Experiments Summary Table:**
-  | Run # | Experiment Name / Configuration | Key Hyperparameters / Model Variant | Test Accuracy | Test F1-Score | MLflow Run ID |
-  | :---: | :--- | :--- | :---: | :---: | :--- |
-  | **1** | Baseline Custom CNN | `[TBD: layers, lr, batch size]` | `[TBD]` | `[TBD]` | `[TBD]` |
-  | **2** | Custom CNN with Data Augmentation | `[TBD: augmentation types, lr]` | `[TBD]` | `[TBD]` | `[TBD]` |
-  | **3** | Tuned Custom CNN (Keras Tuner) | `[TBD: tuned hyperparams]` | `[TBD]` | `[TBD]` | `[TBD]` |
-  | **4** | Pre-trained Backbone (Feature Extraction) | `[TBD: backbone, frozen layers]` | `[TBD]` | `[TBD]` | `[TBD]` |
-  | **5** | Pre-trained Backbone (Fine-Tuned) | `[TBD: unfrozen layers, fine lr]` | `[TBD]` | `[TBD]` | `[TBD]` |
-  | **6** | Tuned Transfer Learning / Alternative Backbone | `[TBD: regularization, optimizer]` | `[TBD]` | `[TBD]` | `[TBD]` |
+  | Run # | Run Name | Controlled Variation | Learning Rate | Augmentation | Image Size | Backbone | Val Loss | Val Accuracy | MLflow Run ID |
+  | :---: | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :--- |
+  | **1** | `Run_1_Baseline_CNN` | Baseline Reference | `1e-3` | True | 224x224 | Scratch | `[TBD]` | `[TBD]` | `[TBD]` |
+  | **2** | `Run_2_LR_1e4` | Learning Rate (1e-4 vs 1e-3) | `1e-4` | True | 224x224 | Scratch | `[TBD]` | `[TBD]` | `[TBD]` |
+  | **3** | `Run_3_No_Augmentation` | Data Augmentation (False vs True) | `1e-3` | False | 224x224 | Scratch | `[TBD]` | `[TBD]` | `[TBD]` |
+  | **4** | `Run_4_Size_128` | Image Resolution (128x128 vs 224x224) | `1e-3` | True | 128x128 | Scratch | `[TBD]` | `[TBD]` | `[TBD]` |
+  | **5** | `Run_5_MobileNet_Frozen` | Pre-trained Backbone (Feature Extraction) | `1e-3` | True | 224x224 | MobileNetV2 (Frozen) | `[TBD]` | `[TBD]` | `[TBD]` |
+  | **6** | `Run_6_MobileNet_Unfrozen` | Fine-Tuning (Top 30 Layers Unfrozen) | `1e-4` | True | 224x224 | MobileNetV2 (Unfrozen) | `[TBD]` | `[TBD]` | `[TBD]` |
 
 - **Screenshots & Evidence:**
-  - *Figure 3.5:* MLflow experiment dashboard with all six runs
+  - *Figure 3.5:* MLflow experiment dashboard with all six runs and comparative parallel coordinates
     ```text
     ![Figure 3.5: Six experiments in MLflow dashboard](figures/task3_5_six_runs.png)
     ```
-    *Caption:* MLflow dashboard comparing parameters, loss curves, and evaluation metrics across all six runs.
+    *Caption:* DagsHub MLflow dashboard comparing hyperparameters and validation metrics across all six experimental runs.
 
 ### Subtask 3.6: MLflow Model Registry
 - **Objective:** Register the best performing model from the six experiments into the MLflow Model Registry, assign versioning, and set model stage.

@@ -571,38 +571,58 @@
 ## Task 5: Database Trail
 
 ### Subtask 5.1: Database Selection and Audit Trail Schema
-- **Objective:** Select and configure the database (e.g., SQLite, PostgreSQL, or Redis) and design the audit trail schema.
-- **Database Trail Schema Table:**
+- **Objective:** Select and configure the database (SQLite via `Flask-SQLAlchemy` with PostgreSQL compatibility) and implement the persistent audit trail schema (`src/web/db.py`).
+- **Database Selection Rationale:** SQLite is chosen for lightweight, file-based persistence with zero extra service overhead for local development and Windows production execution (`sqlite:///data/visionguard.db`). By leveraging `Flask-SQLAlchemy`, the database abstraction layer is completely driver-agnostic and seamlessly shifts to PostgreSQL in Docker Compose and cloud deployments without code modifications.
+- **Database Trail Schema Table (`inference_records`):**
   | Column Name | Data Type | Constraints | Description |
   | :--- | :--- | :--- | :--- |
-  | `id` | `INTEGER` / `UUID` | Primary Key, Auto-increment | Unique record ID |
-  | `filename` | `VARCHAR` | Not Null | Uploaded image filename or hash |
-  | `prediction` | `VARCHAR` | Not Null | Predicted label (`AI-Generated` or `Real`) |
-  | `confidence` | `FLOAT` | Not Null | Classification confidence percentage / probability |
-  | `timestamp` | `DATETIME` | Default CURRENT_TIMESTAMP | Submission timestamp |
-  | `status` | `VARCHAR` | Nullable | Request processing status |
+  | `id` | `INTEGER` | Primary Key, Autoincrement | Unique audit sequence identifier |
+  | `filename` | `VARCHAR(255)` | Not Null | Sanitized uploaded artwork filename |
+  | `verdict` | `VARCHAR(50)` | Not Null | Model prediction (`AI-Generated` or `Real`) |
+  | `confidence` | `FLOAT` | Not Null | Model confidence percentage score |
+  | `model_version` | `VARCHAR(100)` | Not Null | Identifier of registered champion model |
+  | `timestamp` | `DATETIME` | Not Null, Default UTC now | Precise UTC submission timestamp |
 
 ### Subtask 5.2: Database Integration with Flask Routes
-- **Objective:** Connect the database to Flask, logging every prediction event into the database trail upon inference.
-- **Details & Observations:**
-  - `[Document database connection handler, insertion queries/ORM transactions, and connection lifecycle management]`
+- **Objective:** Connect Flask to the database layer, automatically initialize schemas on startup, and commit an audit record upon every classification request in `/predict`.
+- **Implementation Highlights:**
+  - Bound `Flask-SQLAlchemy` to `app` in `src/web/app.py` using `app.config["SQLALCHEMY_DATABASE_URI"]`.
+  - Configured `with app.app_context(): db.create_all()` to ensure the table and parent directory exist on startup.
+  - In `/predict`, directly after model inference, instantiated an `InferenceRecord` with sanitized filename, predicted label, confidence score, and model version tag (`VisionGuard_Champion@v2`), committing it via `db.session.commit()`.
+  - Added database connectivity verification (`SELECT 1`) to the `GET /health` monitoring endpoint.
 - **Screenshots & Evidence:**
-  - *Figure 5.2:* Database record insertion
+  - *Figure 5.2:* Database record insertion & automated testing output
     ```text
     ![Figure 5.2: Database insert log](figures/task5_2_db_insert.png)
     ```
-    *Caption:* Terminal/log output confirming successful database record insertion after a classification request.
+    *Caption:* Execution log of `scripts/test_task5_database.py` verifying automated record creation and primary key generation in SQLite.
 
 ### Subtask 5.3: Dynamic History Route Population
-- **Objective:** Query the database trail to populate the `/history` web page with past prediction records dynamically.
-- **Details & Observations:**
-  - `[Document database query logic, sorting/filtering by timestamp, and dynamic HTML table rendering]`
+- **Objective:** Query the database trail to populate the `/history` web page with real-time audit records and aggregate operational analytics.
+- **Implementation Highlights:**
+  - In `/history`, queried all records sorted newest first: `InferenceRecord.query.order_by(InferenceRecord.timestamp.desc()).all()`.
+  - Calculated dynamic production metrics: Total Inferences, AI Detected count & percentage, Authentic Artwork count & percentage.
+  - Updated `src/web/templates/history.html` with a dynamic Jinja2 loop (`{% for record in records %}`) rendering color-coded status badges, formatted timestamps, and confidence percentages.
+  - Supported JSON output format when requested with `Accept: application/json` for automated verification.
+- **Execution Command:**
+  ```powershell
+  # Step 1: Install Database Extension
+  pip install Flask-SQLAlchemy
+
+  # Step 2: Verify Database Audit Trail Test Suite
+  python scripts/test_task5_database.py
+  ```
 - **Screenshots & Evidence:**
-  - *Figure 5.3:* Populated history view from database
+  - *Figure 5.3a:* Populated dynamic history web page from live database
     ```text
-    ![Figure 5.3: Populated history web page](figures/task5_3_history_db.png)
+    ![Figure 5.3a: Populated history web page](figures/task5_3_history_db.png)
     ```
-    *Caption:* History page displaying past classification queries dynamically fetched from the database.
+    *Caption:* Web interface at `/history` displaying dynamic inference records fetched in real-time from the SQLite database.
+  - *Figure 5.3b:* Test suite terminal verification for Task 5
+    ```text
+    ![Figure 5.3b: Database test suite output](figures/task5_3_test_summary.png)
+    ```
+    *Caption:* Console output of `scripts/test_task5_database.py` validating database connection, automated insertion, and history retrieval.
 
 ---
 

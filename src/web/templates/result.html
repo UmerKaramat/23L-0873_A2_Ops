@@ -88,12 +88,14 @@
             <!-- Detailed Inference Metadata Matrix -->
             <div class="metrics-matrix">
                 <div class="matrix-chip">
-                    <div class="matrix-chip-label">Registered Model</div>
-                    <div class="matrix-chip-val">VisionGuard_Champion@v2</div>
+                    <div class="matrix-chip-label">Database Audit ID</div>
+                    <div class="matrix-chip-val" style="color: #a5b4fc;">
+                        {% if record_id %}#{{ "%04d"|format(record_id) }} (Committed){% else %}Audit Active{% endif %}
+                    </div>
                 </div>
                 <div class="matrix-chip">
-                    <div class="matrix-chip-label">Architecture</div>
-                    <div class="matrix-chip-val">MobileNetV2 (Fine-Tuned)</div>
+                    <div class="matrix-chip-label">Registered Model</div>
+                    <div class="matrix-chip-val">VisionGuard_Champion@v2</div>
                 </div>
                 <div class="matrix-chip">
                     <div class="matrix-chip-label">Payload Format</div>

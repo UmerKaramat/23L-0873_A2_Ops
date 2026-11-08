@@ -5,43 +5,49 @@
 {% block content %}
 <div class="glass-card glass-card-wide">
     <div class="hero-header" style="margin-bottom: 2rem;">
-        <div class="hero-pill-badge">&#128190; PERSISTENT AUDIT SYSTEM</div>
+        <div class="hero-pill-badge">&#128190; PERSISTENT AUDIT SYSTEM (TASK 5)</div>
         <h1 class="hero-title">Inference History &amp; Audit Trail</h1>
         <p class="hero-subtitle">
-            Historical operational log of image classifications processed by the VisionGuard production inference engine.
+            Historical operational log of image classifications permanently recorded into the SQL database.
         </p>
     </div>
 
-    <!-- Task 5 Database Schema Integration Banner -->
+    <!-- Task 5 Database Status Banner -->
     <div class="history-banner-glass">
         <span style="font-size: 2.25rem; color: #a5b4fc;">&#128452;&#65039;</span>
         <div style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.55;">
-            <strong style="color: #ffffff;">Task 5 Database Schema Preview:</strong>
-            This table reflects the persistent audit structure to be integrated with SQLite / PostgreSQL in Task 5. In production, each classification request, sanitized payload metadata, decision threshold, and confidence score is recorded for compliance and operational monitoring.
+            <strong style="color: #ffffff;">Task 5 Live Database Trail:</strong>
+            Every classification performed via the <code>/predict</code> route is committed directly to the database via <strong>Flask-SQLAlchemy</strong>. Records below are queried in real-time, ordered by newest first, and capture the sanitized filename, verdict, confidence score, and model version tag.
         </div>
     </div>
 
-    <!-- Aggregate Production Metrics Deck -->
+    <!-- Dynamic Aggregate Production Metrics Deck -->
     <div class="stats-deck">
         <div class="deck-card">
-            <div class="deck-number">48</div>
+            <div class="deck-number">{{ metrics.total_inferences }}</div>
             <div class="deck-label">Total Inferences</div>
         </div>
         <div class="deck-card">
-            <div class="deck-number" style="color: #f87171;">28</div>
-            <div class="deck-label">AI Detected (58%)</div>
+            <div class="deck-number" style="color: #f87171;">
+                {{ metrics.ai_count }} <span style="font-size: 0.95rem; font-weight: 600;">({{ metrics.pct_ai }}%)</span>
+            </div>
+            <div class="deck-label">AI Detected</div>
         </div>
         <div class="deck-card">
-            <div class="deck-number" style="color: #34d399;">20</div>
-            <div class="deck-label">Authentic (42%)</div>
+            <div class="deck-number" style="color: #34d399;">
+                {{ metrics.real_count }} <span style="font-size: 0.95rem; font-weight: 600;">({{ metrics.pct_real }}%)</span>
+            </div>
+            <div class="deck-label">Authentic Art</div>
         </div>
         <div class="deck-card">
-            <div class="deck-number" style="color: #38bdf8;">34ms</div>
-            <div class="deck-label">Avg WSGI Latency</div>
+            <div class="deck-number" style="color: #38bdf8; font-size: 1.4rem;">
+                SQL LIVE
+            </div>
+            <div class="deck-label">DB Engine Active</div>
         </div>
     </div>
 
-    <!-- Glassmorphic Cyber Data Table -->
+    <!-- Glassmorphic Cyber Data Table with Dynamic Jinja2 Loop -->
     <div class="table-glass-wrapper">
         <table class="cyber-table">
             <thead>
@@ -56,51 +62,47 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td style="font-family: var(--font-mono); color: var(--text-muted);">#0048</td>
-                    <td style="font-family: var(--font-mono); font-size: 0.82rem;">2026-11-08 08:05:22</td>
-                    <td style="font-weight: 600; color: #ffffff;">cyberpunk_portrait_midjourney.png</td>
-                    <td><span class="status-pill pill-ai">&#9888; AI-Generated</span></td>
-                    <td style="font-family: var(--font-mono); font-weight: 700; color: #f87171;">99.12%</td>
-                    <td style="font-size: 0.82rem; color: var(--text-secondary);">VisionGuard_Champion@v2</td>
-                    <td><span class="status-pill pill-persisted">Persisted</span></td>
-                </tr>
-                <tr>
-                    <td style="font-family: var(--font-mono); color: var(--text-muted);">#0047</td>
-                    <td style="font-family: var(--font-mono); font-size: 0.82rem;">2026-11-08 07:58:14</td>
-                    <td style="font-weight: 600; color: #ffffff;">rembrandt_oil_canvas_study.jpg</td>
-                    <td><span class="status-pill pill-real">&#10024; Authentic</span></td>
-                    <td style="font-family: var(--font-mono); font-weight: 700; color: #34d399;">97.64%</td>
-                    <td style="font-size: 0.82rem; color: var(--text-secondary);">VisionGuard_Champion@v2</td>
-                    <td><span class="status-pill pill-persisted">Persisted</span></td>
-                </tr>
-                <tr>
-                    <td style="font-family: var(--font-mono); color: var(--text-muted);">#0046</td>
-                    <td style="font-family: var(--font-mono); font-size: 0.82rem;">2026-11-08 07:44:50</td>
-                    <td style="font-weight: 600; color: #ffffff;">synthwave_concept_dalle3.jpg</td>
-                    <td><span class="status-pill pill-ai">&#9888; AI-Generated</span></td>
-                    <td style="font-family: var(--font-mono); font-weight: 700; color: #f87171;">98.85%</td>
-                    <td style="font-size: 0.82rem; color: var(--text-secondary);">VisionGuard_Champion@v2</td>
-                    <td><span class="status-pill pill-persisted">Persisted</span></td>
-                </tr>
-                <tr>
-                    <td style="font-family: var(--font-mono); color: var(--text-muted);">#0045</td>
-                    <td style="font-family: var(--font-mono); font-size: 0.82rem;">2026-11-08 07:29:12</td>
-                    <td style="font-weight: 600; color: #ffffff;">monet_waterlilies_scan.png</td>
-                    <td><span class="status-pill pill-real">&#10024; Authentic</span></td>
-                    <td style="font-family: var(--font-mono); font-weight: 700; color: #34d399;">94.20%</td>
-                    <td style="font-size: 0.82rem; color: var(--text-secondary);">VisionGuard_Champion@v2</td>
-                    <td><span class="status-pill pill-persisted">Persisted</span></td>
-                </tr>
-                <tr>
-                    <td style="font-family: var(--font-mono); color: var(--text-muted);">#0044</td>
-                    <td style="font-family: var(--font-mono); font-size: 0.82rem;">2026-11-08 07:11:39</td>
-                    <td style="font-weight: 600; color: #ffffff;">surrealist_digital_sdxl.png</td>
-                    <td><span class="status-pill pill-ai">&#9888; AI-Generated</span></td>
-                    <td style="font-family: var(--font-mono); font-weight: 700; color: #f87171;">99.41%</td>
-                    <td style="font-size: 0.82rem; color: var(--text-secondary);">VisionGuard_Champion@v2</td>
-                    <td><span class="status-pill pill-persisted">Persisted</span></td>
-                </tr>
+                {% if records %}
+                    {% for record in records %}
+                    <tr>
+                        <td style="font-family: var(--font-mono); color: var(--text-muted);">
+                            #{{ "%04d"|format(record.id) }}
+                        </td>
+                        <td style="font-family: var(--font-mono); font-size: 0.82rem;">
+                            {{ record.timestamp.strftime("%Y-%m-%d %H:%M:%S") }} UTC
+                        </td>
+                        <td style="font-weight: 600; color: #ffffff; word-break: break-all;">
+                            {{ record.filename }}
+                        </td>
+                        <td>
+                            {% if record.verdict == 'AI-Generated' %}
+                                <span class="status-pill pill-ai">&#9888; AI-Generated</span>
+                            {% else %}
+                                <span class="status-pill pill-real">&#10024; Authentic</span>
+                            {% endif %}
+                        </td>
+                        <td style="font-family: var(--font-mono); font-weight: 700; color: {% if record.verdict == 'AI-Generated' %}#f87171{% else %}#34d399{% endif %};">
+                            {{ "%.2f"|format(record.confidence) }}%
+                        </td>
+                        <td style="font-size: 0.82rem; color: var(--text-secondary);">
+                            {{ record.model_version }}
+                        </td>
+                        <td>
+                            <span class="status-pill pill-persisted">&#10003; Persisted</span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 3rem 1.5rem; color: var(--text-muted);">
+                            <div style="font-size: 2rem; margin-bottom: 0.75rem;">&#128269;</div>
+                            <div style="font-size: 1.05rem; font-weight: 600; color: var(--text-white);">No Inference Records Found</div>
+                            <p style="font-size: 0.85rem; margin-top: 0.35rem;">
+                                No artworks have been analyzed yet. Upload and classify an artwork to create your first database audit record.
+                            </p>
+                        </td>
+                    </tr>
+                {% endif %}
             </tbody>
         </table>
     </div>
@@ -108,7 +110,7 @@
     <!-- Return action -->
     <div style="display: flex; justify-content: space-between; align-items: center;">
         <span style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-muted);">
-            Showing recent 5 of 48 mock audit records &middot; Ready for Task 5 ORM
+            Showing {{ records|length }} record(s) persisted in database &middot; Task 5 Audit Trail
         </span>
         <a href="/" class="btn-glow" style="width: auto; padding: 0.75rem 1.75rem;">
             <span>&larr; Return to Neural Scanner</span>

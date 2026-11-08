@@ -3,17 +3,22 @@ VisionGuard - Flask Web Application & API Routes
 File: src/web/app.py
 
 Purpose:
-Implements the web interface and request validation for Task 4.2:
+Implements the web interface, security validation, and environment configuration (Task 4.4):
+- Environment Configuration:
+  - MODEL_PATH: Path to champion model (default: models/champion.keras)
+  - CONFIDENCE_THRESHOLD: Decision boundary threshold (default: 0.5)
+  - DATABASE_URI: SQLite/PostgreSQL connection string (default: sqlite:///data/visionguard.db)
+  - Strict enforcement of debug=False in production mode.
 - Routes:
-  - GET  /        : Renders modern image upload form.
+  - GET  /        : Renders modern glassmorphic image upload form.
   - POST /predict : Validates upload, runs in-memory inference, returns classification result.
-  - GET  /history : Placeholder for Task 5 database audit trail.
-  - GET  /health  : Health check returning JSON status.
+  - GET  /history : Previews persistent database audit trail (Task 5).
+  - GET  /health  : Health check returning JSON status and active environment configuration.
 - Strict Security & Validation:
   - Filename sanitization via werkzeug.utils.secure_filename.
   - Allowed extensions check (.jpg, .jpeg, .png only).
   - 5MB file size limit enforced in-memory and via MAX_CONTENT_LENGTH.
-  - Complete in-memory processing via .read() bytes passed to predict_image() (zero disk I/O).
+  - In-memory processing via .read() bytes passed to predict_image() (zero disk I/O).
   - Explicit friendly error templates detailing which validation rule was violated.
 """
 
@@ -21,6 +26,7 @@ import base64
 import os
 import sys
 from pathlib import Path
+from dotenv import load_dotenv
 from flask import Flask, jsonify, render_template, request
 from werkzeug.exceptions import RequestEntityTooLarge
 from werkzeug.utils import secure_filename
@@ -28,6 +34,15 @@ from werkzeug.utils import secure_filename
 # Add project root to sys.path
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
+
+# Load environment configuration (.env)
+load_dotenv(PROJECT_ROOT / ".env")
+
+# Environment Configurations (Task 4.4)
+MODEL_PATH = os.getenv("MODEL_PATH", str(PROJECT_ROOT / "models" / "champion.keras"))
+CONFIDENCE_THRESHOLD = float(os.getenv("CONFIDENCE_THRESHOLD", "0.5"))
+DATABASE_URI = os.getenv("DATABASE_URI", f"sqlite:///{PROJECT_ROOT / 'data' / 'visionguard.db'}")
+FLASK_ENV = os.getenv("FLASK_ENV", "production")
 
 from src.models.inference import predict_image
 
@@ -45,7 +60,10 @@ app = Flask(
     static_folder=str(STATIC_DIR)
 )
 
-# Enforce 5MB limit at the WSGI/Flask server level
+# Enforce strict production configuration: debug=False
+app.config["DEBUG"] = False
+app.config["TESTING"] = False
+app.config["ENV"] = "production"
 app.config["MAX_CONTENT_LENGTH"] = MAX_FILE_SIZE_BYTES
 app.config["JSON_SORT_KEYS"] = False
 
@@ -90,12 +108,16 @@ def index():
 
 @app.route("/health", methods=["GET"])
 def health():
-    """Service health check endpoint returning JSON status."""
+    """Service health check endpoint returning JSON status & active configuration."""
     return jsonify({
         "status": "healthy",
         "service": "VisionGuard Web Service",
-        "task": "Task 4.2 Routes & Validation",
-        "model_loaded": True
+        "task": "Task 4.4 Configuration & Production Server",
+        "model_loaded": True,
+        "model_path": MODEL_PATH,
+        "confidence_threshold": CONFIDENCE_THRESHOLD,
+        "database_uri": DATABASE_URI,
+        "debug_mode": app.config.get("DEBUG", False)
     }), 200
 
 
@@ -178,9 +200,9 @@ def predict():
             status_code=413
         )
 
-    # 5. Execute in-memory prediction and catch decode exceptions
+    # 5. Execute in-memory prediction using environment-configured threshold
     try:
-        prediction_result = predict_image(image_bytes)
+        prediction_result = predict_image(image_bytes, threshold=CONFIDENCE_THRESHOLD)
     except ValueError as decode_err:
         # Catches PIL image decompression / header / decoding errors
         return render_friendly_error(
@@ -199,6 +221,7 @@ def predict():
     label = prediction_result["label"]
     confidence = prediction_result["confidence"]
     raw_probability = prediction_result.get("raw_probability", confidence / 100.0)
+    applied_threshold = prediction_result.get("threshold", CONFIDENCE_THRESHOLD)
 
     # Encode uploaded image in memory to Base64 string for zero-disk HTML rendering
     image_base64 = base64.b64encode(image_bytes).decode("utf-8")
@@ -213,17 +236,19 @@ def predict():
             "label": label,
             "confidence": confidence,
             "raw_probability": raw_probability,
+            "threshold": applied_threshold,
             "mime_type": mime_type,
             "size_bytes": len(image_bytes)
         }), 200
 
-    # Render friendly HTML result with in-memory Base64 image
+    # Render state-of-the-art HTML result with in-memory Base64 image
     return render_template(
         "result.html",
         filename=safe_filename,
         label=label,
         confidence=confidence,
         raw_probability=raw_probability,
+        threshold=applied_threshold,
         image_base64=image_base64,
         mime_type=mime_type,
         file_size_kb=file_size_kb
@@ -232,11 +257,13 @@ def predict():
 
 if __name__ == "__main__":
     print("=" * 70)
-    print("     Starting VisionGuard Flask Web Application (Task 4.3)")
+    print("     Starting VisionGuard Flask Web Application (Task 4.4)")
     print("=" * 70)
-    print("Running on: http://127.0.0.1:5000")
-    print("Endpoints : / (UI), /predict (POST), /history (UI), /health (JSON)")
-    print("Dark Theme: Active (src/web/static/css/style.css)")
+    print("Running on            : http://127.0.0.1:5000")
+    print(f"Model Path (ENV)      : {MODEL_PATH}")
+    print(f"Confidence Threshold  : {CONFIDENCE_THRESHOLD}")
+    print(f"Database URI (ENV)    : {DATABASE_URI}")
+    print(f"Flask Debug Mode      : {app.config['DEBUG']} (Strictly Enforced)")
+    print("Endpoints             : / (UI), /predict (POST), /history (UI), /health (JSON)")
     print("=" * 70)
     app.run(host="0.0.0.0", port=5000, debug=False)
-

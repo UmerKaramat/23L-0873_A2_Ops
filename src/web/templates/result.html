@@ -3,90 +3,165 @@
 {% block title %}Verdict: {{ label }} ({{ "%.1f"|format(confidence) }}%) — VisionGuard{% endblock %}
 
 {% block content %}
-<div class="card card-wide">
-    <div class="card-header">
-        <h1 class="card-title">Classification Verdict</h1>
-        <p class="card-subtitle">
-            Processed strictly in memory via VisionGuard Production Champion Model
+<div class="glass-card glass-card-wide">
+    <div class="hero-header" style="margin-bottom: 2rem;">
+        <div class="hero-pill-badge">&#128737; IN-MEMORY CLASSIFICATION AUDIT</div>
+        <h1 class="hero-title">Classification Verdict</h1>
+        <p class="hero-subtitle">
+            Processed strictly in RAM with zero disk writes via Champion MobileNetV2 Fine-Tuned Model.
         </p>
     </div>
 
-    <div class="result-grid">
-        <!-- In-Memory Base64 Uploaded Image Preview (Zero Disk Storage) -->
-        <div class="preview-container">
+    <div class="result-layout-grid">
+        <!-- In-Memory Base64 Uploaded Artwork Window -->
+        <div class="image-window-glass">
             <img src="data:{{ mime_type }};base64,{{ image_base64 }}"
-                 alt="Uploaded artwork {{ filename }}"
-                 class="preview-img">
-            <div class="preview-caption">
-                <span>&#128196; {{ filename }}</span>
-                <span class="preview-caption-tag">&#128274; In-Memory Data URI</span>
+                 alt="Uploaded artwork {{ filename }}">
+            <div class="image-window-footer">
+                <span style="font-weight: 600; color: #ffffff;">&#128196; {{ filename }}</span>
+                <span class="image-window-tag">&#128274; RAM Data URI (0 Disk I/O)</span>
             </div>
         </div>
 
-        <!-- Classification Verdict & Confidence Meter -->
+        <!-- Verdict Display & Animated Circular Confidence Meter -->
         <div>
-            <div class="verdict-box {% if label == 'AI-Generated' %}verdict-ai{% else %}verdict-real{% endif %}">
-                <div class="verdict-title">
+            <!-- Verdict Classification Banner -->
+            <div class="verdict-banner-glass {% if label == 'AI-Generated' %}verdict-banner-ai{% else %}verdict-banner-real{% endif %}">
+                <div class="verdict-heading">
                     {% if label == 'AI-Generated' %}
-                        &#9888;&#65039; AI-Generated
+                        &#9888;&#65039; AI-Generated Artwork
                     {% else %}
-                        &#10024; Authentic Artwork
+                        &#10024; Authentic Human Artwork
                     {% endif %}
                 </div>
-
-                <div class="confidence-display">
-                    Model Confidence: {{ "%.2f"|format(confidence) }}%
-                </div>
-
-                <!-- Animated Confidence Meter Bar -->
-                <div class="meter-container">
-                    <div class="meter-bar {% if label == 'AI-Generated' %}meter-bar-ai{% else %}meter-bar-real{% endif %}"
-                         style="width: {{ confidence }}%;"></div>
+                <div class="verdict-subtext">
+                    Sigmoid P(AI) = {{ "%.4f"|format(raw_probability) }} &middot; Decision Threshold: &ge; {{ "%.2f"|format(threshold) }}
                 </div>
             </div>
 
-            <!-- Detailed Inference Metadata Grid -->
-            <div class="meta-grid">
-                <div class="meta-chip">
-                    <div class="meta-chip-label">Registered Model</div>
-                    <div class="meta-chip-value">VisionGuard_Champion@v2</div>
-                </div>
-                <div class="meta-chip">
-                    <div class="meta-chip-label">Architecture</div>
-                    <div class="meta-chip-value">MobileNetV2 (Fine-Tuned)</div>
-                </div>
-                <div class="meta-chip">
-                    <div class="meta-chip-label">File Type & Size</div>
-                    <div class="meta-chip-value">{{ mime_type }} ({{ file_size_kb }} KB)</div>
-                </div>
-                <div class="meta-chip">
-                    <div class="meta-chip-label">Storage Integrity</div>
-                    <div class="meta-chip-value">0 Bytes Written (RAM Only)</div>
+            <!-- Custom Animated Circular Gauge Progress Meter -->
+            <div class="gauge-visual-container">
+                <svg class="gauge-svg" viewBox="0 0 220 220">
+                    <defs>
+                        <!-- AI-Generated Cyber Gradient -->
+                        <linearGradient id="aiGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#ef4444" />
+                            <stop offset="50%" stop-color="#f43f5e" />
+                            <stop offset="100%" stop-color="#ec4899" />
+                        </linearGradient>
+                        <!-- Authentic Real Gradient -->
+                        <linearGradient id="realGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#10b981" />
+                            <stop offset="50%" stop-color="#059669" />
+                            <stop offset="100%" stop-color="#06b6d4" />
+                        </linearGradient>
+                        <!-- Drop Shadow Filter -->
+                        <filter id="gaugeGlow" x="-20%" y="-20%" width="140%" height="140%">
+                            <feDropShadow dx="0" dy="0" stdDeviation="6"
+                                          flood-color="{% if label == 'AI-Generated' %}#ef4444{% else %}#10b981{% endif %}"
+                                          flood-opacity="0.6"/>
+                        </filter>
+                    </defs>
+
+                    <!-- Background Circular Track -->
+                    <circle class="gauge-track" cx="110" cy="110" r="85" />
+
+                    <!-- Animated Progress Stroke (Circumference = 2 * PI * 85 = 534.07) -->
+                    <circle id="gauge-circle"
+                            class="gauge-progress"
+                            cx="110"
+                            cy="110"
+                            r="85"
+                            stroke="{% if label == 'AI-Generated' %}url(#aiGradient){% else %}url(#realGradient){% endif %}"
+                            filter="url(#gaugeGlow)"
+                            stroke-dasharray="534.07"
+                            stroke-dashoffset="534.07" />
+                </svg>
+
+                <!-- Center Gauge Content -->
+                <div class="gauge-center-content">
+                    <div id="counter-value" class="gauge-percentage">0%</div>
+                    <div class="gauge-label">CONFIDENCE</div>
                 </div>
             </div>
 
-            <!-- Honest Model Caveat Callout -->
-            <div class="caveat-box">
-                <div class="caveat-icon">&#9888;&#65039;</div>
-                <div class="caveat-content">
-                    <div class="caveat-heading">Honest Model Caveat & Limitations</div>
-                    <p class="caveat-text">
+            <!-- Detailed Inference Metadata Matrix -->
+            <div class="metrics-matrix">
+                <div class="matrix-chip">
+                    <div class="matrix-chip-label">Registered Model</div>
+                    <div class="matrix-chip-val">VisionGuard_Champion@v2</div>
+                </div>
+                <div class="matrix-chip">
+                    <div class="matrix-chip-label">Architecture</div>
+                    <div class="matrix-chip-val">MobileNetV2 (Fine-Tuned)</div>
+                </div>
+                <div class="matrix-chip">
+                    <div class="matrix-chip-label">Payload Format</div>
+                    <div class="matrix-chip-val">{{ mime_type }} ({{ file_size_kb }} KB)</div>
+                </div>
+                <div class="matrix-chip">
+                    <div class="matrix-chip-label">Storage Integrity</div>
+                    <div class="matrix-chip-val" style="color: #6ee7b7;">0 Bytes Written to Disk</div>
+                </div>
+            </div>
+
+            <!-- Honest Model Caveat Callout Box -->
+            <div class="caveat-banner-glass">
+                <div class="caveat-icon-badge">&#9888;&#65039;</div>
+                <div class="caveat-body">
+                    <div class="caveat-title-text">Honest Model Caveat &amp; Limitations</div>
+                    <p class="caveat-paragraph">
                         <strong>Note: AI models can make mistakes. This tool is for estimation only.</strong>
                         Deep learning classifiers evaluate visual artifacts and frequency patterns characteristic of generative models, but cannot replace verified human provenance, physical inspection, or expert forensic authentication.
                     </p>
                 </div>
             </div>
 
-            <!-- Action Navigation Buttons -->
+            <!-- Action Navigation Controls -->
             <div style="display: flex; gap: 1rem;">
-                <a href="/" class="btn btn-primary" style="flex: 2;">
-                    <span>&#128247; Classify Another Image</span>
+                <a href="/" class="btn-glow" style="flex: 2;">
+                    <span>&#128247; Scan Another Artwork</span>
                 </a>
-                <a href="/history" class="btn btn-secondary" style="flex: 1;">
-                    <span>Audit History</span>
+                <a href="/history" class="btn-glow btn-secondary-glass" style="flex: 1;">
+                    <span>Audit Trail</span>
                 </a>
             </div>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Smooth animated circular progress bar and numeric counter
+    document.addEventListener('DOMContentLoaded', () => {
+        const targetConfidence = {{ confidence }};
+        const circumference = 534.07;
+        const targetOffset = circumference - (circumference * (targetConfidence / 100));
+
+        const gaugeCircle = document.getElementById('gauge-circle');
+        const counterEl = document.getElementById('counter-value');
+
+        // Animate SVG stroke dashoffset
+        setTimeout(() => {
+            gaugeCircle.style.strokeDashoffset = targetOffset;
+        }, 150);
+
+        // Smooth numeric count-up animation
+        let startVal = 0;
+        const durationMs = 1500;
+        const stepTime = 20;
+        const totalSteps = durationMs / stepTime;
+        const increment = targetConfidence / totalSteps;
+
+        const timer = setInterval(() => {
+            startVal += increment;
+            if (startVal >= targetConfidence) {
+                startVal = targetConfidence;
+                clearInterval(timer);
+            }
+            counterEl.textContent = startVal.toFixed(1) + '%';
+        }, stepTime);
+    });
+</script>
 {% endblock %}

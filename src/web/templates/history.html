@@ -1,48 +1,49 @@
 {% extends "base.html" %}
 
-{% block title %}Prediction History & Audit Trail — VisionGuard{% endblock %}
+{% block title %}Inference History & Audit Trail — VisionGuard{% endblock %}
 
 {% block content %}
-<div class="card card-wide">
-    <div class="card-header">
-        <h1 class="card-title">Inference History & Audit Trail</h1>
-        <p class="card-subtitle">
-            Historical log of image classifications processed by the VisionGuard inference engine.
+<div class="glass-card glass-card-wide">
+    <div class="hero-header" style="margin-bottom: 2rem;">
+        <div class="hero-pill-badge">&#128190; PERSISTENT AUDIT SYSTEM</div>
+        <h1 class="hero-title">Inference History &amp; Audit Trail</h1>
+        <p class="hero-subtitle">
+            Historical operational log of image classifications processed by the VisionGuard production inference engine.
         </p>
     </div>
 
-    <!-- Task 5 Database Preview Banner -->
-    <div class="history-banner">
-        <span style="font-size: 2rem; color: #60a5fa;">&#128190;</span>
-        <div style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.5;">
-            <strong style="color: var(--text-primary);">Task 5 Database Schema Preview:</strong>
-            This table reflects the persistent audit structure to be integrated with SQLite / PostgreSQL in Task 5. In production, each classification request, sanitized metadata, model verdict, and confidence score is recorded for accountability and monitoring.
+    <!-- Task 5 Database Schema Integration Banner -->
+    <div class="history-banner-glass">
+        <span style="font-size: 2.25rem; color: #a5b4fc;">&#128452;&#65039;</span>
+        <div style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.55;">
+            <strong style="color: #ffffff;">Task 5 Database Schema Preview:</strong>
+            This table reflects the persistent audit structure to be integrated with SQLite / PostgreSQL in Task 5. In production, each classification request, sanitized payload metadata, decision threshold, and confidence score is recorded for compliance and operational monitoring.
         </div>
     </div>
 
-    <!-- Aggregate Analytics Overview -->
-    <div class="history-stats-grid">
-        <div class="stat-card">
-            <div class="stat-number">48</div>
-            <div class="stat-label">Total Inferences</div>
+    <!-- Aggregate Production Metrics Deck -->
+    <div class="stats-deck">
+        <div class="deck-card">
+            <div class="deck-number">48</div>
+            <div class="deck-label">Total Inferences</div>
         </div>
-        <div class="stat-card">
-            <div class="stat-number" style="color: var(--ai-color);">28</div>
-            <div class="stat-label">AI Detected (58%)</div>
+        <div class="deck-card">
+            <div class="deck-number" style="color: #f87171;">28</div>
+            <div class="deck-label">AI Detected (58%)</div>
         </div>
-        <div class="stat-card">
-            <div class="stat-number" style="color: var(--real-color);">20</div>
-            <div class="stat-label">Real Artwork (42%)</div>
+        <div class="deck-card">
+            <div class="deck-number" style="color: #34d399;">20</div>
+            <div class="deck-label">Authentic (42%)</div>
         </div>
-        <div class="stat-card">
-            <div class="stat-number" style="color: #60a5fa;">36ms</div>
-            <div class="stat-label">Avg In-Memory Latency</div>
+        <div class="deck-card">
+            <div class="deck-number" style="color: #38bdf8;">34ms</div>
+            <div class="deck-label">Avg WSGI Latency</div>
         </div>
     </div>
 
-    <!-- Styled Dark History Table -->
-    <div class="table-wrapper">
-        <table class="data-table">
+    <!-- Glassmorphic Cyber Data Table -->
+    <div class="table-glass-wrapper">
+        <table class="cyber-table">
             <thead>
                 <tr>
                     <th># ID</th>
@@ -50,67 +51,67 @@
                     <th>Sanitized Filename</th>
                     <th>Verdict</th>
                     <th>Confidence</th>
-                    <th>Registered Model</th>
+                    <th>Model Architecture</th>
                     <th>DB Status</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
                     <td style="font-family: var(--font-mono); color: var(--text-muted);">#0048</td>
-                    <td style="font-family: var(--font-mono); font-size: 0.8rem;">2026-11-08 07:42:15</td>
-                    <td style="font-weight: 600;">cyberpunk_portrait_midjourney.png</td>
-                    <td><span class="status-badge status-ai">&#9888; AI-Generated</span></td>
-                    <td style="font-family: var(--font-mono); font-weight: 700;">99.12%</td>
-                    <td style="font-size: 0.8rem; color: var(--text-secondary);">VisionGuard_Champion@v2</td>
-                    <td><span class="status-badge status-active">Persisted</span></td>
+                    <td style="font-family: var(--font-mono); font-size: 0.82rem;">2026-11-08 08:05:22</td>
+                    <td style="font-weight: 600; color: #ffffff;">cyberpunk_portrait_midjourney.png</td>
+                    <td><span class="status-pill pill-ai">&#9888; AI-Generated</span></td>
+                    <td style="font-family: var(--font-mono); font-weight: 700; color: #f87171;">99.12%</td>
+                    <td style="font-size: 0.82rem; color: var(--text-secondary);">VisionGuard_Champion@v2</td>
+                    <td><span class="status-pill pill-persisted">Persisted</span></td>
                 </tr>
                 <tr>
                     <td style="font-family: var(--font-mono); color: var(--text-muted);">#0047</td>
-                    <td style="font-family: var(--font-mono); font-size: 0.8rem;">2026-11-08 07:38:50</td>
-                    <td style="font-weight: 600;">rembrandt_oil_canvas_study.jpg</td>
-                    <td><span class="status-badge status-real">&#10024; Authentic</span></td>
-                    <td style="font-family: var(--font-mono); font-weight: 700;">97.64%</td>
-                    <td style="font-size: 0.8rem; color: var(--text-secondary);">VisionGuard_Champion@v2</td>
-                    <td><span class="status-badge status-active">Persisted</span></td>
+                    <td style="font-family: var(--font-mono); font-size: 0.82rem;">2026-11-08 07:58:14</td>
+                    <td style="font-weight: 600; color: #ffffff;">rembrandt_oil_canvas_study.jpg</td>
+                    <td><span class="status-pill pill-real">&#10024; Authentic</span></td>
+                    <td style="font-family: var(--font-mono); font-weight: 700; color: #34d399;">97.64%</td>
+                    <td style="font-size: 0.82rem; color: var(--text-secondary);">VisionGuard_Champion@v2</td>
+                    <td><span class="status-pill pill-persisted">Persisted</span></td>
                 </tr>
                 <tr>
                     <td style="font-family: var(--font-mono); color: var(--text-muted);">#0046</td>
-                    <td style="font-family: var(--font-mono); font-size: 0.8rem;">2026-11-08 07:31:22</td>
-                    <td style="font-weight: 600;">synthwave_retrofuturistic_dalle3.jpg</td>
-                    <td><span class="status-badge status-ai">&#9888; AI-Generated</span></td>
-                    <td style="font-family: var(--font-mono); font-weight: 700;">98.85%</td>
-                    <td style="font-size: 0.8rem; color: var(--text-secondary);">VisionGuard_Champion@v2</td>
-                    <td><span class="status-badge status-active">Persisted</span></td>
+                    <td style="font-family: var(--font-mono); font-size: 0.82rem;">2026-11-08 07:44:50</td>
+                    <td style="font-weight: 600; color: #ffffff;">synthwave_concept_dalle3.jpg</td>
+                    <td><span class="status-pill pill-ai">&#9888; AI-Generated</span></td>
+                    <td style="font-family: var(--font-mono); font-weight: 700; color: #f87171;">98.85%</td>
+                    <td style="font-size: 0.82rem; color: var(--text-secondary);">VisionGuard_Champion@v2</td>
+                    <td><span class="status-pill pill-persisted">Persisted</span></td>
                 </tr>
                 <tr>
                     <td style="font-family: var(--font-mono); color: var(--text-muted);">#0045</td>
-                    <td style="font-family: var(--font-mono); font-size: 0.8rem;">2026-11-08 07:15:04</td>
-                    <td style="font-weight: 600;">monet_waterlilies_scan.png</td>
-                    <td><span class="status-badge status-real">&#10024; Authentic</span></td>
-                    <td style="font-family: var(--font-mono); font-weight: 700;">94.20%</td>
-                    <td style="font-size: 0.8rem; color: var(--text-secondary);">VisionGuard_Champion@v2</td>
-                    <td><span class="status-badge status-active">Persisted</span></td>
+                    <td style="font-family: var(--font-mono); font-size: 0.82rem;">2026-11-08 07:29:12</td>
+                    <td style="font-weight: 600; color: #ffffff;">monet_waterlilies_scan.png</td>
+                    <td><span class="status-pill pill-real">&#10024; Authentic</span></td>
+                    <td style="font-family: var(--font-mono); font-weight: 700; color: #34d399;">94.20%</td>
+                    <td style="font-size: 0.82rem; color: var(--text-secondary);">VisionGuard_Champion@v2</td>
+                    <td><span class="status-pill pill-persisted">Persisted</span></td>
                 </tr>
                 <tr>
                     <td style="font-family: var(--font-mono); color: var(--text-muted);">#0044</td>
-                    <td style="font-family: var(--font-mono); font-size: 0.8rem;">2026-11-08 06:55:18</td>
-                    <td style="font-weight: 600;">surrealist_digital_render_sdxl.png</td>
-                    <td><span class="status-badge status-ai">&#9888; AI-Generated</span></td>
-                    <td style="font-family: var(--font-mono); font-weight: 700;">99.41%</td>
-                    <td style="font-size: 0.8rem; color: var(--text-secondary);">VisionGuard_Champion@v2</td>
-                    <td><span class="status-badge status-active">Persisted</span></td>
+                    <td style="font-family: var(--font-mono); font-size: 0.82rem;">2026-11-08 07:11:39</td>
+                    <td style="font-weight: 600; color: #ffffff;">surrealist_digital_sdxl.png</td>
+                    <td><span class="status-pill pill-ai">&#9888; AI-Generated</span></td>
+                    <td style="font-family: var(--font-mono); font-weight: 700; color: #f87171;">99.41%</td>
+                    <td style="font-size: 0.82rem; color: var(--text-secondary);">VisionGuard_Champion@v2</td>
+                    <td><span class="status-pill pill-persisted">Persisted</span></td>
                 </tr>
             </tbody>
         </table>
     </div>
 
-    <!-- Navigation actions -->
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
-        <span style="font-size: 0.8rem; color: var(--text-muted);">
+    <!-- Return action -->
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-muted);">
             Showing recent 5 of 48 mock audit records &middot; Ready for Task 5 ORM
         </span>
-        <a href="/" class="btn btn-primary" style="width: auto; padding: 0.75rem 1.5rem;">
-            <span>&larr; Return to Upload Form</span>
+        <a href="/" class="btn-glow" style="width: auto; padding: 0.75rem 1.75rem;">
+            <span>&larr; Return to Neural Scanner</span>
         </a>
     </div>
 </div>

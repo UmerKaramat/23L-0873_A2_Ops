@@ -4,35 +4,48 @@ File: src/models/inference.py
 
 Purpose:
 Provides an optimized, in-memory inference service for VisionGuard:
-1. Loads the champion model from 'models/champion.keras' EXACTLY ONCE using a Singleton
-   pattern so it stays persistently in memory across requests.
-2. Accepts raw image bytes (as received from web uploads or API requests).
-3. Preprocesses the image: decodes to RGB, resizes to 224x224, and normalizes pixel values.
-4. Returns a dictionary with predicted 'label' ('Real' or 'AI-Generated') and 'confidence' (float percentage).
+1. Reads configuration strictly from environment variables using os.getenv:
+   - MODEL_PATH: Path to the champion model (default: models/champion.keras).
+   - CONFIDENCE_THRESHOLD: Decision boundary probability for AI-Generated class (default: 0.5).
+2. Loads the model EXACTLY ONCE using a Singleton pattern (ChampionModelSingleton)
+   so it persists in RAM across requests with zero disk reload latency.
+3. Accepts raw image bytes (as received from web uploads or API requests).
+4. Preprocesses the image: decodes to RGB, resizes to 224x224, and normalizes pixel intensities.
+5. Returns a dictionary with predicted 'label' ('Real' or 'AI-Generated'), 'confidence' percentage,
+   and raw probability.
 """
 
+import os
 from io import BytesIO
 from pathlib import Path
+from dotenv import load_dotenv
 import numpy as np
 from PIL import Image
 import tensorflow as tf
 
-# Project root directory for absolute path resolution
+# Load environment variables from .env
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
-DEFAULT_MODEL_PATH = PROJECT_ROOT / "models" / "champion.keras"
+load_dotenv(PROJECT_ROOT / ".env")
+
+# Environment Variable Configurations (Task 4.4)
+DEFAULT_MODEL_PATH = os.getenv("MODEL_PATH", str(PROJECT_ROOT / "models" / "champion.keras"))
+DEFAULT_CONFIDENCE_THRESHOLD = float(os.getenv("CONFIDENCE_THRESHOLD", "0.5"))
 
 
 class ChampionModelSingleton:
     """
-    Singleton wrapper to ensure the trained Keras model is loaded exactly once
+    Singleton wrapper ensuring the trained Keras model is loaded exactly once
     into memory and reused across all subsequent prediction calls.
     """
     _instance = None
     _model = None
 
     @classmethod
-    def get_model(cls, model_path=DEFAULT_MODEL_PATH):
+    def get_model(cls, model_path=None):
         if cls._model is None:
+            if model_path is None:
+                model_path = os.getenv("MODEL_PATH", str(DEFAULT_MODEL_PATH))
+
             path = Path(model_path)
             if not path.is_absolute():
                 path = PROJECT_ROOT / path
@@ -62,7 +75,7 @@ class ChampionModelSingleton:
 
 def preprocess_image_bytes(image_bytes: bytes, target_size=(224, 224)) -> np.ndarray:
     """
-    Preprocesses raw uploaded image bytes:
+    Preprocesses raw uploaded image bytes in-memory:
     1. Decodes bytes into a PIL Image.
     2. Converts to 3-channel RGB.
     3. Resizes to target dimensions (224x224).
@@ -80,7 +93,7 @@ def preprocess_image_bytes(image_bytes: bytes, target_size=(224, 224)) -> np.nda
         pil_img = Image.open(BytesIO(image_bytes))
         # Ensure 3-channel RGB
         pil_img = pil_img.convert("RGB")
-        # Resize to 224x224
+        # Resize to target dimensions (default 224x224)
         pil_img = pil_img.resize(target_size, Image.Resampling.BILINEAR)
 
         # Convert to numpy array & normalize to [0.0, 1.0]
@@ -93,22 +106,28 @@ def preprocess_image_bytes(image_bytes: bytes, target_size=(224, 224)) -> np.nda
         raise ValueError(f"Failed to decode and preprocess image: {err}") from err
 
 
-def predict_image(image_bytes: bytes) -> dict:
+def predict_image(image_bytes: bytes, threshold: float = None) -> dict:
     """
     Performs binary classification on an uploaded image.
 
     Args:
         image_bytes (bytes): Raw image file bytes.
+        threshold (float, optional): Custom decision threshold for AI-Generated class.
+                                     Defaults to CONFIDENCE_THRESHOLD env var (0.5).
 
     Returns:
         dict: {
             "label": str ("Real" or "AI-Generated"),
             "confidence": float (percentage, e.g. 98.45),
-            "raw_probability": float (sigmoid probability of AI class)
+            "raw_probability": float (sigmoid probability of AI class),
+            "threshold": float (applied decision threshold)
         }
     """
     if not isinstance(image_bytes, bytes) or len(image_bytes) == 0:
         raise ValueError("Invalid image input: Expected non-empty bytes.")
+
+    if threshold is None:
+        threshold = float(os.getenv("CONFIDENCE_THRESHOLD", str(DEFAULT_CONFIDENCE_THRESHOLD)))
 
     # 1. Fetch cached model from Singleton (loads once)
     model = ChampionModelSingleton.get_model()
@@ -120,8 +139,8 @@ def predict_image(image_bytes: bytes) -> dict:
     raw_pred = model.predict(input_tensor, verbose=0)
     prob_ai = float(raw_pred[0][0])
 
-    # 4. Class assignment & confidence calculation
-    if prob_ai >= 0.5:
+    # 4. Class assignment & confidence calculation using threshold
+    if prob_ai >= threshold:
         label = "AI-Generated"
         confidence = prob_ai * 100.0
     else:
@@ -131,6 +150,6 @@ def predict_image(image_bytes: bytes) -> dict:
     return {
         "label": label,
         "confidence": round(confidence, 2),
-        "raw_probability": round(prob_ai, 4)
+        "raw_probability": round(prob_ai, 4),
+        "threshold": threshold
     }
-

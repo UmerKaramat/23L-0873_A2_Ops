@@ -4,49 +4,54 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}VisionGuard — AI vs Real Image Classification{% endblock %}</title>
-    <!-- Google Fonts: Inter -->
+
+    <!-- Google Fonts: Plus Jakarta Sans, Inter, JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-    <!-- VisionGuard Dark Mode Production Stylesheet -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+
+    <!-- VisionGuard Next-Gen Glassmorphic Dark Design System -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     {% block head %}{% endblock %}
 </head>
 <body>
-    <!-- Persistent Top Navigation Bar -->
+    <!-- Ambient Floating Cosmic Mesh Orbs -->
+    <div class="ambient-glow-1"></div>
+    <div class="ambient-glow-2"></div>
+
+    <!-- Glassmorphic Persistent Navigation Header -->
     <header class="navbar">
         <a href="/" class="nav-brand">
-            <span class="brand-icon">&#128737;</span>
+            <span class="brand-icon-shield">&#128737;</span>
             <span>VisionGuard</span>
-            <span class="brand-badge">Champion @v2</span>
+            <span class="brand-pill">PROD &middot; v2.0</span>
         </a>
 
         <nav class="nav-links">
-            <a href="/" class="nav-link {% if request.path == '/' %}active{% endif %}">Upload (Home)</a>
-            <a href="/history" class="nav-link {% if request.path == '/history' %}active{% endif %}">History</a>
-            <a href="/health" target="_blank" class="nav-status" title="View JSON Health Endpoint">
-                <span class="status-dot"></span>
-                <span>API Live</span>
+            <a href="/" class="nav-link {% if request.path == '/' %}active{% endif %}">Scan &amp; Classify</a>
+            <a href="/history" class="nav-link {% if request.path == '/history' %}active{% endif %}">Audit Trail</a>
+            <a href="/health" target="_blank" class="nav-status" title="View Production Service Health &amp; ENV JSON">
+                <span class="status-pulse-dot"></span>
+                <span>WSGI LIVE</span>
             </a>
         </nav>
     </header>
 
-    <!-- Main Content Container -->
-    <main class="main-container">
+    <!-- Main Dynamic Application Container -->
+    <main class="main-wrapper">
         {% block content %}{% endblock %}
     </main>
 
-    <!-- Persistent Global Footer -->
-    <footer class="footer">
+    <!-- Glassmorphic Global Footer -->
+    <footer class="footer-glass">
         <div>
-            VisionGuard &middot; MLOps Assignment 2 &middot; Flask & TensorFlow Production Service
+            VisionGuard &middot; Production AI vs. Real Image Classifier &middot; MLOps Assignment 2
         </div>
-        <div style="margin-top: 0.35rem; font-size: 0.78rem; color: var(--text-muted);">
-            Zero Disk I/O &middot; In-Memory Inference &middot; MobileNetV2 Fine-Tuned Model
+        <div style="margin-top: 0.4rem; font-family: var(--font-mono); font-size: 0.76rem; color: var(--text-muted);">
+            Waitress Multi-Threaded WSGI &middot; In-Memory Inference &middot; MobileNetV2 Champion @v2
         </div>
     </footer>
 
     {% block scripts %}{% endblock %}
 </body>
 </html>
-

@@ -523,6 +523,49 @@
     ```
     *Caption:* Styled dark-mode audit trail table previewing the persistent schema for Task 5 database integration.
 
+### Subtask 4.4: Environment Configuration, Production WSGI Server & UI/UX Overhaul
+- **Objective:** Finalize production-grade deployment by replacing development defaults with strict environment-driven configurations and launching the multi-threaded Waitress WSGI server, paired with a state-of-the-art glassmorphic frontend:
+  - **Environment Configuration:**
+    - Externalized settings loaded via `python-dotenv` from `.env`:
+      - `MODEL_PATH`: `models/champion.keras` (local champion model artifact).
+      - `CONFIDENCE_THRESHOLD`: `0.5` (decision threshold for binary classification).
+      - `DATABASE_URI`: `sqlite:///data/visionguard.db` (database connection string).
+      - `FLASK_ENV`: `production` (with `debug=False` strictly enforced in application code).
+    - Monitored dynamically via `GET /health` endpoint with active configuration introspection.
+  - **Production WSGI Server (`scripts/run_production_server.py`):**
+    - Uses `waitress.serve()` as the multi-threaded WSGI server for Windows production environments.
+    - Configurable CLI parameters: `--host` (default `0.0.0.0`), `--port` (default `5000`), `--threads` (default `4`), `--channel-timeout` (default `120`).
+    - Eliminates single-threaded concurrency bottlenecks and guarantees non-blocking request execution.
+  - **Premium UI/UX Overhaul:**
+    - Frosted glassmorphism (`backdrop-filter: blur(28px) saturate(180%)`), deep space to midnight violet mesh gradients (`#060814` to `#121633`), and floating ambient cosmic orbs.
+    - Interactive holographic scanner dropzone with client-side zero-latency thumbnail preview.
+    - **Custom Animated SVG Circular Confidence Gauge:** Dual-track radial progress meter with glowing gradients (cyber crimson for AI, neon emerald for authentic) and smooth numeric count-up animation.
+    - Honest model caveat callout and production architecture tags.
+- **Execution Command:**
+  ```powershell
+  # Step 1: Install Waitress WSGI Server
+  pip install waitress
+
+  # Step 2: Launch VisionGuard Production WSGI Server
+  python scripts/run_production_server.py --port 5000 --threads 4
+  ```
+- **Screenshots & Evidence:**
+  - *Figure 4.4a:* Waitress production WSGI server startup console banner
+    ```text
+    ![Figure 4.4a: Production server startup](figures/task4_4_production_server.png)
+    ```
+    *Caption:* Console execution of `scripts/run_production_server.py` demonstrating multi-threaded Waitress initialization with strict debug=False.
+  - *Figure 4.4b:* Next-generation glassmorphic UI with animated circular confidence meter
+    ```text
+    ![Figure 4.4b: State-of-the-art UI with circular gauge](figures/task4_4_circular_gauge.png)
+    ```
+    *Caption:* Production result interface featuring the custom SVG circular confidence gauge, cyber-red/emerald verdict styling, and honest model caveat.
+  - *Figure 4.4c:* Production health check JSON endpoint with environment configuration
+    ```text
+    ![Figure 4.4c: Health check endpoint JSON](figures/task4_4_health_json.png)
+    ```
+    *Caption:* JSON response from `/health` demonstrating model loading, confidence threshold, database URI, and debug=False status.
+
 ---
 
 ## Task 5: Database Trail

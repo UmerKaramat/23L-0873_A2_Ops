@@ -3,22 +3,22 @@
 {% block title %}Validation Error — VisionGuard{% endblock %}
 
 {% block content %}
-<div class="card" style="text-align: center;">
-    <div class="error-icon">&#9888;&#65039;</div>
-    <h1 class="card-title" style="color: var(--ai-color); margin-bottom: 0.75rem;">Validation Error</h1>
+<div class="glass-card" style="text-align: center;">
+    <div class="error-icon-aura">&#9888;&#65039;</div>
+    <h1 class="hero-title" style="color: #f87171; margin-bottom: 0.75rem;">Security &amp; Validation Error</h1>
 
-    <!-- Rule Violated Badge (Matches test parser regex: Rule Violated:\s*([^<]+)) -->
-    <div class="rule-badge">Rule Violated: {{ rule_violated or 'Security / Format Constraint' }}</div>
+    <!-- Rule Violated Badge (Matches test suite regex: Rule Violated:\s*([^<]+)) -->
+    <div class="rule-pill-badge">Rule Violated: {{ rule_violated or 'Security / Format Constraint' }}</div>
 
-    <!-- Error Details Box (Matches test parser regex: <p style="margin-top:\s*0\.35rem;\">(.*?)</p>) -->
-    <div class="error-details-box">
-        <div class="error-details-title">Error Details:</div>
-        <p style="margin-top: 0.35rem; color: #f87171; font-weight: 500;">{{ error_message }}</p>
+    <!-- Error Details Glass Box (Matches test suite regex: <p style="margin-top:\s*0\.35rem;\">(.*?)</p>) -->
+    <div class="error-details-glass">
+        <div class="error-details-header">Diagnostic Details:</div>
+        <p style="margin-top: 0.35rem; color: #fca5a5; font-weight: 500;">{{ error_message }}</p>
 
-        <div style="margin-top: 1.25rem; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted);">
+        <div style="margin-top: 1.25rem; font-family: var(--font-mono); font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted);">
             Enforced Security Policies:
         </div>
-        <ul class="rule-guide-list">
+        <ul class="error-policy-list">
             <li><strong>Permitted Formats:</strong> .jpg, .jpeg, .png</li>
             <li><strong>File Size Threshold:</strong> Maximum 5 MB per payload</li>
             <li><strong>Data Integrity:</strong> File must be non-empty and decodable as a valid RGB raster image</li>
@@ -26,8 +26,8 @@
         </ul>
     </div>
 
-    <a href="/" class="btn btn-primary">
-        <span>&larr; Return to Upload Form</span>
+    <a href="/" class="btn-glow">
+        <span>&larr; Return to Neural Scanner</span>
     </a>
 </div>
 {% endblock %}

@@ -1,0 +1,66 @@
+# ==============================================================================
+# VisionGuard — Docker Ignore Configuration (.dockerignore)
+# Purpose: Excludes unnecessary files, caches, datasets, and virtual environments
+#          from the Docker build context to ensure small, secure, fast builds.
+# ==============================================================================
+
+# Virtual Environments
+.venv/
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Environment Variables & Credentials
+.env
+.env.*
+!.env.example
+
+# Git & Version Control
+.git/
+.gitignore
+.gitattributes
+.github/
+
+# Dataset & Raw Files (Never bake large datasets into container images)
+data/
+
+# Caches & Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# Experiment Tracking & DVC
+mlruns/
+experiments/
+.dvc/
+.dvcignore
+*.dvc
+
+# Reports & Documentation
+reports/
+notebooks/
+
+# IDE & Editor Directories
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary Files & Logs
+*.log
+tmp/
+temp/
+
+# Redundant Model Artifacts (Keep ONLY champion.keras for deployment)
+models/*
+!models/champion.keras
+

@@ -448,27 +448,39 @@
     ```
     *Caption:* Output of `scripts/run_task4_1.py` demonstrating in-memory Singleton model loading and successful predictions on sample AI and Real image bytes.
 
-### Subtask 4.2: Flask Core Application and HTML/CSS Interface
-- **Objective:** Develop a clean Flask web application with custom HTML/CSS user interface served via Jinja2 templates.
-- **Details & Observations:**
-  - `[Document Flask application structure, template inheritance, static CSS styling, and responsive layout]`
-- **Screenshots & Evidence:**
-  - *Figure 4.2:* Flask application interface
-    ```text
-    ![Figure 4.2: Flask web UI](figures/task4_1_flask_ui.png)
-    ```
-    *Caption:* Web UI rendered by Flask showing upload interface and navigation bar.
+### Subtask 4.2: Flask Application & Strict Request Validation
+- **Objective:** Implement the Flask web application (`src/web/app.py`) with strict security and request validation:
+  - **Routes:**
+    - `GET /`: Serves the primary drag-and-drop image upload form.
+    - `POST /predict`: Handles image classification with in-memory validation.
+    - `GET /history`: Placeholder route for Task 5 persistent database trail.
+    - `GET /health`: Returns JSON health status (`{"status": "healthy"}`).
+  - **Security & Validation Rules:**
+    1. *Filename Sanitization:* Applied using `werkzeug.utils.secure_filename`.
+    2. *Format Whitelist:* Enforces `.jpg`, `.jpeg`, and `.png` extensions only; rejects all others.
+    3. *Size Limit:* Restricts uploads to a maximum of 5MB via `MAX_CONTENT_LENGTH` and in-memory byte checks.
+    4. *In-Memory Processing:* Pass `.read()` bytes directly to `predict_image()` without writing to disk (`zero file.save()`).
+    5. *Decodability Check:* Catches PIL/decompression exceptions on corrupt images and reports descriptive errors.
+    6. *Friendly Error Reporting:* Returns custom HTML error page stating the exact rule violated.
+- **Execution Commands:**
+  ```powershell
+  # Terminal 1: Start Flask Web Server
+  python src/web/app.py
 
-### Subtask 4.2: Image Upload and Prediction Result Routes
-- **Objective:** Implement `/upload` route handling user image submissions and `/predict` route returning classification results with confidence scores.
-- **Details & Observations:**
-  - `[Document file validation (extensions, size limits), image preprocessing integration, and prediction output format]`
+  # Terminal 2: Execute Validation Error Test Suite
+  python scripts/test_task4_2_errors.py
+  ```
 - **Screenshots & Evidence:**
-  - *Figure 4.2:* Prediction result display
+  - *Figure 4.2a:* Flask application upload interface
     ```text
-    ![Figure 4.2: Prediction result screen](figures/task4_2_prediction_result.png)
+    ![Figure 4.2a: Flask web UI](figures/task4_2_flask_ui.png)
     ```
-    *Caption:* Prediction result screen displaying uploaded image, classification label (AI-Generated vs Real), and confidence score.
+    *Caption:* Clean, responsive web UI rendered by Flask templates showing drag-and-drop upload zone and format badges.
+  - *Figure 4.2b:* Validation error test execution & friendly error responses
+    ```text
+    ![Figure 4.2b: Validation error testing output](figures/task4_2_validation_errors.png)
+    ```
+    *Caption:* Terminal output from `scripts/test_task4_2_errors.py` verifying that prohibited extensions, oversized files, and corrupted data are rejected with friendly error messages.
 
 ### Subtask 4.3: History and Health Check Routes
 - **Objective:** Implement `/history` route to display prior classification logs and `/health` route for service status monitoring.

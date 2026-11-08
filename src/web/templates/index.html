@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VisionGuard — AI vs Real Image Classification</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --radius: 12px;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        header {
+            background: #ffffff;
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .brand { font-size: 1.25rem; font-weight: 700; color: var(--primary); }
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            margin-left: 1.5rem;
+            font-weight: 500;
+        }
+        .nav-links a:hover { color: var(--primary); }
+        main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 2.5rem;
+            max-width: 540px;
+            width: 100%;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+        h1 { font-size: 1.75rem; margin-bottom: 0.5rem; }
+        p.subtitle { color: var(--text-muted); margin-bottom: 2rem; font-size: 0.95rem; }
+        .dropzone {
+            border: 2px dashed #cbd5e1;
+            border-radius: var(--radius);
+            padding: 2.5rem 1.5rem;
+            background: #f8fafc;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 1.5rem;
+        }
+        .dropzone:hover { border-color: var(--primary); background: #f1f5f9; }
+        .icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .file-input { display: none; }
+        .badges { display: flex; justify-content: center; gap: 0.5rem; margin-bottom: 1.5rem; }
+        .badge {
+            font-size: 0.75rem;
+            background: #e2e8f0;
+            color: #334155;
+            padding: 0.25rem 0.6rem;
+            border-radius: 9999px;
+            font-weight: 600;
+        }
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.85rem 1.75rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s;
+        }
+        .btn:hover { background: var(--primary-hover); }
+        .file-name { margin-top: 0.75rem; font-size: 0.9rem; color: var(--primary); font-weight: 600; }
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="brand">VisionGuard</div>
+        <nav class="nav-links">
+            <a href="/">Upload</a>
+            <a href="/history">History</a>
+            <a href="/health" target="_blank">Health</a>
+        </nav>
+    </header>
+
+    <main>
+        <div class="card">
+            <h1>Classify Image</h1>
+            <p class="subtitle">Upload an image to determine whether it is an authentic photograph or AI-generated.</p>
+
+            <form action="/predict" method="POST" enctype="multipart/form-data">
+                <div class="dropzone" onclick="document.getElementById('file-upload').click()">
+                    <div class="icon">&#128247;</div>
+                    <p style="font-weight: 600; margin-bottom: 0.25rem;">Click to select an image</p>
+                    <p style="font-size: 0.8rem; color: var(--text-muted);">In-memory inference &middot; No disk storage</p>
+                    <input type="file" id="file-upload" name="file" class="file-input" accept=".jpg,.jpeg,.png" onchange="showFilename(this)">
+                    <div id="selected-filename" class="file-name"></div>
+                </div>
+
+                <div class="badges">
+                    <span class="badge">JPG / JPEG / PNG</span>
+                    <span class="badge">Max 5MB</span>
+                    <span class="badge">224 &times; 224 Input</span>
+                </div>
+
+                <button type="submit" class="btn">Classify Image</button>
+            </form>
+        </div>
+    </main>
+
+    <footer>
+        VisionGuard &middot; MLOps Assignment 2 &middot; Flask & TensorFlow Production Service
+    </footer>
+
+    <script>
+        function showFilename(input) {
+            const display = document.getElementById('selected-filename');
+            if (input.files && input.files[0]) {
+                display.innerText = 'Selected: ' + input.files[0].name;
+            } else {
+                display.innerText = '';
+            }
+        }
+    </script>
+</body>
+</html>
+

@@ -401,16 +401,31 @@
     ```
     *Caption:* DagsHub MLflow dashboard comparing hyperparameters and validation metrics across all six experimental runs.
 
-### Subtask 3.6: MLflow Model Registry
-- **Objective:** Register the best performing model from the six experiments into the MLflow Model Registry, assign versioning, and set model stage.
-- **Details & Observations:**
-  - `[Document registered model name, version tag, transition to Staging/Production, and model metadata]`
+### Subtask 3.6: MLflow Model Registry & Champion Model Delivery
+- **Objective:** Establish the model registry workflow, stage the champion model, and implement local caching for server delivery:
+  - Search `Task_3_5_Comparison` to identify the top 2 candidate runs by validation accuracy.
+  - Register model `VisionGuard_Champion` (Version 1 = 2nd best, Version 2 = Best).
+  - Assign the alias `@champion` to Version 2 via `client.set_registered_model_alias()`.
+  - Validate model serving by loading via `models:/VisionGuard_Champion@champion` and predicting on a sample image.
+  - **Server Delivery Strategy:** Persist the loaded champion model to `models/champion.keras`. This guarantees that the Flask web application and Docker container serve predictions locally with zero network latency, without relying on synchronous DagsHub API calls per inference.
+- **Execution Command:**
+  ```powershell
+  python scripts/run_task3_6_registry.py
+  ```
+- **Registered Model Metadata Table:**
+  | Property | Configured Value | Description |
+  | :--- | :--- | :--- |
+  | **Registered Model Name** | `VisionGuard_Champion` | Centralized Model Registry identifier |
+  | **Version 1 (Challenger)** | Version 1 | Derived from 2nd best validation accuracy run |
+  | **Version 2 (Champion)** | Version 2 | Derived from top validation accuracy run |
+  | **Assigned Alias** | `@champion` | Points to Version 2 for serving |
+  | **Local Server Target** | `models/champion.keras` | Local artifact for containerized serving |
 - **Screenshots & Evidence:**
-  - *Figure 3.6:* MLflow Model Registry dashboard
+  - *Figure 3.6:* DagsHub MLflow Model Registry dashboard
     ```text
     ![Figure 3.6: Registered model in MLflow](figures/task3_6_model_registry.png)
     ```
-    *Caption:* MLflow Model Registry displaying the production-tagged VisionGuard classification model.
+    *Caption:* DagsHub Model Registry UI displaying `VisionGuard_Champion` with Version 1, Version 2, and the `@champion` alias.
 
 ---
 

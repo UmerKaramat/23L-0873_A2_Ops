@@ -242,6 +242,9 @@ def run_experiment_comparison(
             mlflow.log_metric("val_loss", val_loss)
             mlflow.log_metric("val_accuracy", val_acc)
 
+            # Log Model Artifact
+            mlflow.keras.log_model(model, artifact_path="model")
+
             summary_records.append({
                 "Run #": idx,
                 "Run Name": cfg["run_name"],

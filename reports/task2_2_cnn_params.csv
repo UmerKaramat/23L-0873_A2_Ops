@@ -1,0 +1,19 @@
+Layer_Index,Layer_Name,Layer_Type,Output_Shape,Parameter_Count,Is_Trainable
+1,rescaling_layer,Rescaling,Unknown,0,True
+2,conv1,Conv2D,Unknown,896,True
+3,bn1,BatchNormalization,Unknown,128,True
+4,pool1,MaxPooling2D,Unknown,0,True
+5,conv2,Conv2D,Unknown,18496,True
+6,bn2,BatchNormalization,Unknown,256,True
+7,pool2,MaxPooling2D,Unknown,0,True
+8,conv3,Conv2D,Unknown,73856,True
+9,bn3,BatchNormalization,Unknown,512,True
+10,pool3,MaxPooling2D,Unknown,0,True
+11,conv4,Conv2D,Unknown,147584,True
+12,bn4,BatchNormalization,Unknown,512,True
+13,pool4,MaxPooling2D,Unknown,0,True
+14,gap,GlobalAveragePooling2D,Unknown,0,True
+15,dense_features,Dense,Unknown,16512,True
+16,dropout_classifier,Dropout,Unknown,0,True
+17,output_sigmoid,Dense,Unknown,129,True
+TOTAL,Total Layers: 17,"Trainable: 258,881",Non-Trainable: 0,258881,True

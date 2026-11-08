@@ -169,6 +169,10 @@ def main():
     _, mlflow_ver = check_package("mlflow")
     print(f"MLflow (Tracking)     : {mlflow_ver}")
 
+    # python-dotenv (Task 3)
+    _, dotenv_ver = check_package("python-dotenv", "dotenv")
+    print(f"python-dotenv         : {dotenv_ver}")
+
     # DVC (Task 1 & 2)
     _, dvc_ver = check_package("dvc")
     print(f"DVC (Versioning)      : {dvc_ver}")

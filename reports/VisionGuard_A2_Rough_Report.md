@@ -161,77 +161,126 @@
 
 ## Task 2: TensorFlow/Keras Model Development, Custom CNN, Transfer Learning, Evaluation, Error Analysis, Keras Tuner, and Optional Grad-CAM
 
-### Subtask 2.1: Data Preprocessing, Augmentation, and Splitting
-- **Objective:** Implement reproducible Train/Validation/Test data splitting, image normalization, resizing, and data augmentation pipelines.
-- **Details & Observations:**
-  - `[Document split ratios (e.g. 70/15/15 or 80/10/10), target image dimensions, and data augmentation techniques applied]`
+### Subtask 2.1: Data Preprocessing, Augmentation, and Input Pipeline
+- **Objective:** Implement reproducible Train/Validation/Test data splitting (70/15/15), image decoding, resizing (224x224), batching, prefetching, and training-only data augmentation.
+- **Methodology & Module:**
+  - Built modular pipeline in `src/data/pipeline.py`.
+  - Applied stratified split on `data/raw/AiArtData` and `data/raw/RealArt` with seed=42.
+  - Training augmentation includes `RandomFlip`, `RandomRotation`, `RandomZoom`, and `RandomContrast`.
+  - Extracted sample training batch to verify augmentation visual evidence.
+- **Execution Command:**
+  ```powershell
+  python scripts/run_task2.py
+  ```
 - **Screenshots & Evidence:**
-  - *Figure 2.1:* Preprocessed data pipeline and split summary
+  - *Figure 2.1:* Augmented training batch visualization
     ```text
-    ![Figure 2.1: Data split and preprocessing](figures/task2_1_data_split.png)
+    ![Figure 2.1: Augmented training batch](figures/task2_1_augmented_batch.png)
     ```
-    *Caption:* Output log showing data split sample counts and input tensor shapes.
+    *Caption:* Grid of 9 augmented training samples displaying transformed images, inferred class labels, and tensor indices.
+
+---
 
 ### Subtask 2.2: Custom CNN Architecture Design & Training
-- **Objective:** Design, implement, and train a custom Convolutional Neural Network (CNN) from scratch using TensorFlow/Keras.
-- **Details & Observations:**
-  - `[Document layer configurations (Conv2D, MaxPooling2D, Dropout, Dense), optimizer, loss function, epochs, and baseline training curves]`
+- **Objective:** Construct a lightweight Custom CNN from scratch, compile with Adam and binary crossentropy, print parameter summary, export parameter CSV, and train with checkpointing and early stopping.
+- **Methodology & Module:**
+  - Implemented in `src/models/custom_cnn.py`.
+  - Architecture: Rescaling(1/255) -> 4x [Conv2D + BatchNormalization + MaxPooling2D] -> GlobalAveragePooling2D -> Dense(128) -> Dropout(0.4) -> Dense(1, Sigmoid).
+  - Parameter table exported to `reports/task2_2_cnn_params.csv`.
+  - Trained using `ModelCheckpoint` (monitoring val_loss), `ReduceLROnPlateau`, and `EarlyStopping`.
 - **Screenshots & Evidence:**
-  - *Figure 2.2:* Custom CNN architecture summary and training curves
+  - *Figure 2.2:* Custom CNN training history curves
     ```text
-    ![Figure 2.2: Custom CNN training curves](figures/task2_2_custom_cnn.png)
+    ![Figure 2.2: Custom CNN training curves](figures/task2_2_cnn_curves.png)
     ```
-    *Caption:* Training vs validation accuracy and loss curves for the custom CNN model.
+    *Caption:* Training vs validation accuracy and loss curves for Custom CNN with dashed line indicating the best checkpoint epoch.
 
-### Subtask 2.3: Transfer Learning using Keras Applications
-- **Objective:** Implement transfer learning using a pre-trained Keras Application backbone (e.g., MobileNetV2, EfficientNetB0, or ResNet50), with frozen feature extraction and subsequent fine-tuning.
-- **Details & Observations:**
-  - `[Document selected pre-trained backbone, classification head architecture, frozen vs unfrozen layers, learning rate, and fine-tuning results]`
+---
+
+### Subtask 2.3: Transfer Learning using Keras Applications (MobileNetV2)
+- **Objective:** Implement transfer learning with pre-trained MobileNetV2 backbone. Phase 1: feature extraction (backbone frozen). Phase 2: fine-tuning (top 30 layers unfrozen, reduced learning rate).
+- **Methodology & Module:**
+  - Implemented in `src/models/transfer_model.py`.
+  - Embedded native `mobilenet_v2.preprocess_input`.
+  - Audited and printed trainable layer lists before and after unfreezing in terminal.
+  - Saved combined initial and fine-tuning history curves with phase boundary and best checkpoint marker.
 - **Screenshots & Evidence:**
-  - *Figure 2.3:* Transfer learning training and fine-tuning curves
+  - *Figure 2.3:* Combined Transfer Learning training and fine-tuning curves
     ```text
-    ![Figure 2.3: Transfer learning curves](figures/task2_3_transfer_learning.png)
+    ![Figure 2.3: MobileNetV2 transfer curves](figures/task2_3_transfer_curves.png)
     ```
-    *Caption:* Training and validation loss/accuracy curves for the transfer learning model before and after fine-tuning.
+    *Caption:* Accuracy and loss trajectories across feature extraction and fine-tuning phases, with markers for fine-tuning start and the best saved checkpoint.
 
-### Subtask 2.4: Comprehensive Model Evaluation
-- **Objective:** Quantitatively evaluate both Custom CNN and Transfer Learning models on the test split using standard classification metrics.
+---
+
+### Subtask 2.4: Comprehensive Model Evaluation (Custom CNN vs Transfer Learning)
+- **Objective:** Quantitatively evaluate both trained models against the unseen test split using Accuracy, Precision, Recall, F1-Score, and ROC-AUC.
+- **Methodology & Module:**
+  - Implemented in `src/evaluation/metrics.py`.
+  - Generated comparison table in terminal and exported to `reports/task2_model_comparison.csv`.
+  - Plotted side-by-side Confusion Matrices and comparative ROC curves with AUC annotations.
 - **Model Evaluation Comparison Table:**
-  | Metric | Custom CNN Model | Transfer Learning Model |
+  | Metric | Custom CNN Model | MobileNetV2 Transfer Learning |
   | :--- | :---: | :---: |
-  | Accuracy | `[TBD]` | `[TBD]` |
-  | Precision | `[TBD]` | `[TBD]` |
-  | Recall | `[TBD]` | `[TBD]` |
-  | F1-Score | `[TBD]` | `[TBD]` |
-  | ROC-AUC | `[TBD]` | `[TBD]` |
+  | **Accuracy** | `[TBD: Run scripts/run_task2.py]` | `[TBD: Run scripts/run_task2.py]` |
+  | **Precision** | `[TBD: Run scripts/run_task2.py]` | `[TBD: Run scripts/run_task2.py]` |
+  | **Recall** | `[TBD: Run scripts/run_task2.py]` | `[TBD: Run scripts/run_task2.py]` |
+  | **F1-Score** | `[TBD: Run scripts/run_task2.py]` | `[TBD: Run scripts/run_task2.py]` |
+  | **ROC-AUC** | `[TBD: Run scripts/run_task2.py]` | `[TBD: Run scripts/run_task2.py]` |
 - **Screenshots & Evidence:**
-  - *Figure 2.4:* Test set evaluation and confusion matrices
+  - *Figure 2.4a:* Side-by-side Confusion Matrices
     ```text
-    ![Figure 2.4: Confusion matrices](figures/task2_4_confusion_matrices.png)
+    ![Figure 2.4a: Confusion matrices](figures/task2_5_confusion_matrices.png)
     ```
-    *Caption:* Normalized confusion matrices and ROC curves comparing custom CNN and transfer learning models.
+    *Caption:* Normalized confusion matrix heatmaps comparing Custom CNN and MobileNetV2 on the test set.
+  - *Figure 2.4b:* Comparative ROC Curves
+    ```text
+    ![Figure 2.4b: ROC curves](figures/task2_5_roc_curves.png)
+    ```
+    *Caption:* Comparative Receiver Operating Characteristic (ROC) curves with AUC metrics for both models.
+
+---
 
 ### Subtask 2.5: Qualitative Error Analysis
-- **Objective:** Analyze false positive and false negative predictions to identify specific failure modes and patterns.
-- **Details & Observations:**
-  - `[Document error patterns: subtle artifacts, high-frequency textures, lighting anomalies, edge blurring]`
+- **Objective:** Inspect test set failure cases (false positives and false negatives) from the best performing model to identify common visual error patterns.
+- **Methodology & Module:**
+  - Implemented in `src/evaluation/metrics.py`.
+  - Isolated test misclassifications sorted by prediction confidence.
+  - Rendered a grid of 10 misclassified images displaying true class, predicted label, confidence score, and filename.
 - **Screenshots & Evidence:**
-  - *Figure 2.5:* Misclassified sample gallery
+  - *Figure 2.5:* Qualitative error analysis image grid
     ```text
-    ![Figure 2.5: Error analysis gallery](figures/task2_5_error_gallery.png)
+    ![Figure 2.5: Error analysis gallery](figures/task2_6_error_analysis.png)
     ```
-    *Caption:* Gallery of false positives and false negatives displaying predicted probabilities versus ground truth.
+    *Caption:* Gallery of 10 misclassified test images showing true label, predicted label, confidence score, and image filename.
+
+---
 
 ### Subtask 2.6: Hyperparameter Tuning with Keras Tuner
-- **Objective:** Use Keras Tuner (e.g., RandomSearch, Hyperband, or BayesianOptimization) to systematically search for optimal hyperparameters.
-- **Details & Observations:**
-  - `[Document search space: filters, dense units, dropout rates, learning rates; best hyperparameter combination discovered]`
-- **Screenshots & Evidence:**
-  - *Figure 2.6:* Keras Tuner search results
-    ```text
-    ![Figure 2.6: Keras Tuner trials](figures/task2_6_keras_tuner.png)
+- **Objective:** Demonstrate hyperparameter tuning both on a toy benchmark dataset and applied to VisionGuard transfer learning.
+- **Evidence Gen 1 (Toy Search):**
+  - Script: `scripts/run_tuner_toy.py`
+  - Tunes dense units and learning rate on Fashion-MNIST dataset.
+  - Results exported to `reports/task2_7_tuner_toy_results.csv`.
+  - Execution Command:
+    ```powershell
+    python scripts/run_tuner_toy.py
     ```
-    *Caption:* Keras Tuner trial summary plot and best hyperparameter configuration output.
+- **Evidence Gen 2 (Applied Search):**
+  - Script: `scripts/run_tuner.py`
+  - Tunes learning rate, dropout rate, and unfrozen backbone layers across 8 trials on the VisionGuard dataset.
+  - Results exported to `reports/task2_7_tuner_visionguard_results.csv`.
+  - Execution Command:
+    ```powershell
+    python scripts/run_tuner.py --max-trials 8 --epochs 3
+    ```
+- **Optimal Hyperparameters Summary Table:**
+  | Hyperparameter | Search Space Range | Best Value Selected |
+  | :--- | :--- | :---: |
+  | **Learning Rate** | `[1e-3, 5e-4, 1e-4, 1e-5]` | `[TBD: Run run_tuner.py]` |
+  | **Dropout Rate** | `[0.2, 0.3, 0.4, 0.5]` | `[TBD: Run run_tuner.py]` |
+  | **Unfrozen Layers** | `[10, 20, 30]` | `[TBD: Run run_tuner.py]` |
+  | **Best Validation Accuracy** | Optimization Objective | `[TBD: Run run_tuner.py]` |
 
 ### Subtask 2.7: Model Interpretability with Grad-CAM (Optional / Extension)
 - **Objective:** Apply Grad-CAM (Gradient-weighted Class Activation Mapping) to visually explain the decision regions and feature focus of the model.
@@ -248,19 +297,61 @@
 
 ## Task 3: MLflow and DagsHub Experiment Tracking, Artifacts, Six Experiments, and Model Registry
 
-### Subtask 3.1: MLflow Setup and DagsHub Remote Integration
-- **Objective:** Configure MLflow client with DagsHub tracking URI and authentication to log parameters, metrics, and model artifacts remotely.
-- **Details & Observations:**
-  - `[Document MLflow tracking URI, experiment naming convention, artifact store configuration]`
-- **Screenshots & Evidence:**
-  - *Figure 3.1:* DagsHub MLflow integration overview
-    ```text
-    ![Figure 3.1: DagsHub MLflow setup](figures/task3_1_mlflow_dagshub.png)
-    ```
-    *Caption:* MLflow tracking interface on DagsHub showing active experiment connection.
+### Subtask 3.1: MLflow Local Setup & Toy Experiment (Explicit Manual Logging)
+- **Objective:** Configure local MLflow tracking store (`./mlruns`), verify experiment creation (`Task_3_1_Local_Toy`), and demonstrate explicit manual logging without `autolog`:
+  - Log hyperparameters (`learning_rate`, `epochs`, `batch_size`) via `mlflow.log_param()`.
+  - Log per-epoch training and validation metrics (`loss`, `accuracy`) using a custom Keras callback via `mlflow.log_metric()`.
+  - Save and log training curves plot via `mlflow.log_artifact()`.
+  - Serialize and log trained model via `mlflow.keras.log_model()`.
+- **Execution Commands:**
+  ```powershell
+  # 1. Run local MLflow toy experiment with explicit manual logging
+  python scripts/run_mlflow_toy_local.py --learning-rate 0.01 --epochs 5
 
-### Subtask 3.2: Execution and Tracking of Six Distinct Experiments
-- **Objective:** Systematically track, compare, and log at least six distinct experimental runs in MLflow.
+  # 2. Launch local MLflow UI to inspect runs, metrics, and logged artifacts
+  mlflow ui --backend-store-uri ./mlruns
+  ```
+- **Screenshots & Evidence:**
+  - *Figure 3.1:* Local MLflow experiment dashboard and artifact viewer
+    ```text
+    ![Figure 3.1: Local MLflow experiment dashboard](figures/task3_1_mlflow_local_toy.png)
+    ```
+    *Caption:* MLflow UI displaying the `Task_3_1_Local_Toy` experiment, showing logged parameters, metric history curves, and saved model artifact.
+
+### Subtask 3.2: DagsHub Remote Tracking Verification & Six Experiments Setup
+- **Objective:** Verify remote MLflow connection with DagsHub using credentials from `.env` via `load_dotenv()`:
+  - Validate remote tracking with toy experiment `scripts/run_mlflow_toy_dagshub.py` under experiment `Task_3_2_DagsHub_Toy`.
+  - Log parameters, epoch metrics via custom callback, training curve artifacts, and serialized model to DagsHub.
+- **Execution Command (DagsHub Remote Validation):**
+  ```powershell
+  python scripts/run_mlflow_toy_dagshub.py --learning-rate 0.01 --epochs 5
+  ```
+- **Screenshots & Evidence:**
+  - *Figure 3.2a:* DagsHub MLflow remote experiment dashboard
+    ```text
+    ![Figure 3.2a: DagsHub remote experiment dashboard](figures/task3_2_dagshub_toy_ui.png)
+    ```
+    *Caption:* DagsHub web interface displaying the `Task_3_2_DagsHub_Toy` experiment with remote metric trajectories and artifacts.
+
+### Subtask 3.3: VisionGuard Training Instrumentation (Manual vs Autologging)
+- **Objective:** Instrument VisionGuard model training on DagsHub, comparing explicit manual logging against TensorFlow autologging:
+  - Git commit hash and DVC version automatically extracted via subprocess and attached as tags.
+  - Fixed seed=42 set as tag for deterministic tracking.
+  - **Run 1 (`Manual_Logging`):** Explicitly logs hyperparameters, per-epoch metrics with custom callback, final test evaluation metrics, and serialized model.
+  - **Run 2 (`TF_Autologging`):** Enabled via `mlflow.tensorflow.autolog()`, logs fresh CNN training dynamics automatically, and cleanly disabled.
+- **Execution Command:**
+  ```powershell
+  python scripts/run_task3_3_instrumentation.py --epochs 2 --subsample 600
+  ```
+- **Screenshots & Evidence:**
+  - *Figure 3.3:* DagsHub experiment tracking dashboard comparing Manual vs Autologging
+    ```text
+    ![Figure 3.3: Manual vs Autologging comparison](figures/task3_3_instrumentation_comparison.png)
+    ```
+    *Caption:* DagsHub MLflow dashboard showing `Task_3_3_VisionGuard_Tracking` comparing `Manual_Logging` and `TF_Autologging` runs with tags, metrics, and models.
+
+### Subtask 3.4: Execution and Tracking of Six Distinct Experiments
+- **Objective:** Systematically track, compare, and log at least six distinct experimental runs in MLflow on DagsHub.
 - **Six Experiments Summary Table:**
   | Run # | Experiment Name / Configuration | Key Hyperparameters / Model Variant | Test Accuracy | Test F1-Score | MLflow Run ID |
   | :---: | :--- | :--- | :---: | :---: | :--- |

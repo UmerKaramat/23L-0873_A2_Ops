@@ -1,0 +1,3 @@
+Model Name,Accuracy,Precision,Recall,F1-Score,ROC-AUC
+Baseline Custom CNN,0.4452,0.0000,0.0000,0.0000,0.5943
+MobileNetV2 Transfer Learning,0.7260,0.7253,0.8148,0.7674,0.7789

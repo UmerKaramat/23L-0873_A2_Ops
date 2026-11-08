@@ -482,16 +482,46 @@
     ```
     *Caption:* Terminal output from `scripts/test_task4_2_errors.py` verifying that prohibited extensions, oversized files, and corrupted data are rejected with friendly error messages.
 
-### Subtask 4.3: History and Health Check Routes
-- **Objective:** Implement `/history` route to display prior classification logs and `/health` route for service status monitoring.
-- **Details & Observations:**
-  - `[Document route implementations, JSON/HTML response structure, and health endpoint status codes]`
+### Subtask 4.3: Professional Dark-Mode UI, Base64 In-Memory Previews, and Template Architecture
+- **Objective:** Build a responsive dark-mode web interface (`src/web/static/css/style.css`), modular Jinja2 template hierarchy (`base.html`, `index.html`, `result.html`, `history.html`, `error.html`), and in-memory Base64 image preview pipeline:
+  - **Dark Mode Design System (`src/web/static/css/style.css`):**
+    - High-contrast slate theme (`#0b0f19` canvas, `#151d2f` cards, `#27354f` borders) with modern typography (`Inter` sans-serif and `JetBrains Mono`).
+    - Differentiated classification palettes: Emerald (`#10b981`) for Authentic Human Artwork and Crimson (`#ef4444`) for AI-Generated Artwork, accompanied by glow effects and animated confidence meters.
+    - Glassmorphism navigation bar with real-time API health status indicator dot.
+  - **Template Modularization (`src/web/templates/`):**
+    - `base.html`: Common layout with persistent navigation bar (links to `/` Upload and `/history` Audit Trail, plus direct `/health` badge).
+    - `index.html`: Centered drag-and-drop file upload zone with interactive hover states, client-side thumbnail preview, file size validation badges, and submission loading states.
+    - `result.html`: Displays the classification verdict, model confidence score, animated progress bar, metadata chips, and the uploaded image rendered via **in-memory Base64 Data URI** (`data:{{ mime_type }};base64,{{ image_base64 }}`). Adheres strictly to the **zero-disk-storage privacy guarantee**.
+    - **Honest Model Caveat:** Explicitly surfaced on `result.html` to promote ethical AI transparency:
+      > *"Note: AI models can make mistakes. This tool is for estimation only. Deep learning classifiers evaluate visual artifacts and frequency patterns characteristic of generative models, but cannot replace verified human provenance, physical inspection, or expert forensic authentication."*
+    - `history.html`: Styled dark-mode audit table illustrating the schema for Task 5 persistent storage (ID, Timestamp, Filename, Verdict, Confidence, Model, Status).
+    - `error.html`: User-friendly dark alert layout identifying the violated validation rule and guiding permitted uploads.
+- **Verification Commands:**
+  ```powershell
+  # Start the VisionGuard Dark-Mode Flask Server
+  python src/web/app.py
+
+  # Open browser at:
+  # http://127.0.0.1:5000/         (Upload interface)
+  # http://127.0.0.1:5000/history  (Audit history preview)
+  # http://127.0.0.1:5000/health   (JSON health status)
+  ```
 - **Screenshots & Evidence:**
-  - *Figure 4.3:* History and health check views
+  - *Figure 4.3a:* Dark-mode upload interface with drag-and-drop dropzone
     ```text
-    ![Figure 4.3: History and health check routes](figures/task4_3_history_health.png)
+    ![Figure 4.3a: VisionGuard dark-mode upload interface](figures/task4_3_dark_upload.png)
     ```
-    *Caption:* Browser views displaying `/health` status response and `/history` log page.
+    *Caption:* Centered drag-and-drop artwork classification interface with dark-theme styling and security constraint pills.
+  - *Figure 4.3b:* Classification result view with Base64 preview and honest caveat
+    ```text
+    ![Figure 4.3b: Result view with Base64 preview](figures/task4_3_result_view.png)
+    ```
+    *Caption:* Inference result displaying in-memory Base64 image preview, confidence meter, model metadata, and ethical AI caveat.
+  - *Figure 4.3c:* Prediction history & audit trail preview table
+    ```text
+    ![Figure 4.3c: Audit history table](figures/task4_3_history_table.png)
+    ```
+    *Caption:* Styled dark-mode audit trail table previewing the persistent schema for Task 5 database integration.
 
 ---
 

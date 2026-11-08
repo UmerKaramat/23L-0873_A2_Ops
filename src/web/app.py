@@ -17,6 +17,7 @@ Implements the web interface and request validation for Task 4.2:
   - Explicit friendly error templates detailing which validation rule was violated.
 """
 
+import base64
 import os
 import sys
 from pathlib import Path
@@ -194,35 +195,48 @@ def predict():
             status_code=500
         )
 
-    # 6. Format Response
+    # 6. Format Response & Prepare Base64 Image Preview (In-Memory Only)
     label = prediction_result["label"]
     confidence = prediction_result["confidence"]
+    raw_probability = prediction_result.get("raw_probability", confidence / 100.0)
 
-    # If client requested JSON
+    # Encode uploaded image in memory to Base64 string for zero-disk HTML rendering
+    image_base64 = base64.b64encode(image_bytes).decode("utf-8")
+    mime_type = "image/png" if file_ext == ".png" else "image/jpeg"
+    file_size_kb = round(len(image_bytes) / 1024.0, 1)
+
+    # If client requested JSON (API mode)
     if request.headers.get("Accept") == "application/json":
         return jsonify({
             "status": "success",
             "filename": safe_filename,
             "label": label,
             "confidence": confidence,
-            "raw_probability": prediction_result["raw_probability"]
+            "raw_probability": raw_probability,
+            "mime_type": mime_type,
+            "size_bytes": len(image_bytes)
         }), 200
 
-    # Render friendly HTML result
+    # Render friendly HTML result with in-memory Base64 image
     return render_template(
         "result.html",
         filename=safe_filename,
         label=label,
-        confidence=confidence
+        confidence=confidence,
+        raw_probability=raw_probability,
+        image_base64=image_base64,
+        mime_type=mime_type,
+        file_size_kb=file_size_kb
     )
 
 
 if __name__ == "__main__":
     print("=" * 70)
-    print("     Starting VisionGuard Flask Web Application (Task 4.2)")
+    print("     Starting VisionGuard Flask Web Application (Task 4.3)")
     print("=" * 70)
     print("Running on: http://127.0.0.1:5000")
     print("Endpoints : / (UI), /predict (POST), /history (UI), /health (JSON)")
+    print("Dark Theme: Active (src/web/static/css/style.css)")
     print("=" * 70)
     app.run(host="0.0.0.0", port=5000, debug=False)
 

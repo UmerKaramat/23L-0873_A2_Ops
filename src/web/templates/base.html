@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}VisionGuard — AI vs Real Image Classification{% endblock %}</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <!-- VisionGuard Dark Mode Production Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <!-- Persistent Top Navigation Bar -->
+    <header class="navbar">
+        <a href="/" class="nav-brand">
+            <span class="brand-icon">&#128737;</span>
+            <span>VisionGuard</span>
+            <span class="brand-badge">Champion @v2</span>
+        </a>
+
+        <nav class="nav-links">
+            <a href="/" class="nav-link {% if request.path == '/' %}active{% endif %}">Upload (Home)</a>
+            <a href="/history" class="nav-link {% if request.path == '/history' %}active{% endif %}">History</a>
+            <a href="/health" target="_blank" class="nav-status" title="View JSON Health Endpoint">
+                <span class="status-dot"></span>
+                <span>API Live</span>
+            </a>
+        </nav>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="main-container">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Persistent Global Footer -->
+    <footer class="footer">
+        <div>
+            VisionGuard &middot; MLOps Assignment 2 &middot; Flask & TensorFlow Production Service
+        </div>
+        <div style="margin-top: 0.35rem; font-size: 0.78rem; color: var(--text-muted);">
+            Zero Disk I/O &middot; In-Memory Inference &middot; MobileNetV2 Fine-Tuned Model
+        </div>
+    </footer>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>
+

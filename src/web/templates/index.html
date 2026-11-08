@@ -1,157 +1,128 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VisionGuard — AI vs Real Image Classification</title>
-    <style>
-        :root {
-            --primary: #2563eb;
-            --primary-hover: #1d4ed8;
-            --bg: #f8fafc;
-            --card-bg: #ffffff;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-            --border: #e2e8f0;
-            --radius: 12px;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg);
-            color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        header {
-            background: #ffffff;
-            border-bottom: 1px solid var(--border);
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .brand { font-size: 1.25rem; font-weight: 700; color: var(--primary); }
-        .nav-links a {
-            color: var(--text-muted);
-            text-decoration: none;
-            margin-left: 1.5rem;
-            font-weight: 500;
-        }
-        .nav-links a:hover { color: var(--primary); }
-        main {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem 1rem;
-        }
-        .card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 2.5rem;
-            max-width: 540px;
-            width: 100%;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-            text-align: center;
-        }
-        h1 { font-size: 1.75rem; margin-bottom: 0.5rem; }
-        p.subtitle { color: var(--text-muted); margin-bottom: 2rem; font-size: 0.95rem; }
-        .dropzone {
-            border: 2px dashed #cbd5e1;
-            border-radius: var(--radius);
-            padding: 2.5rem 1.5rem;
-            background: #f8fafc;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            margin-bottom: 1.5rem;
-        }
-        .dropzone:hover { border-color: var(--primary); background: #f1f5f9; }
-        .icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
-        .file-input { display: none; }
-        .badges { display: flex; justify-content: center; gap: 0.5rem; margin-bottom: 1.5rem; }
-        .badge {
-            font-size: 0.75rem;
-            background: #e2e8f0;
-            color: #334155;
-            padding: 0.25rem 0.6rem;
-            border-radius: 9999px;
-            font-weight: 600;
-        }
-        .btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 0.85rem 1.75rem;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            width: 100%;
-            transition: background 0.2s;
-        }
-        .btn:hover { background: var(--primary-hover); }
-        .file-name { margin-top: 0.75rem; font-size: 0.9rem; color: var(--primary); font-weight: 600; }
-        footer {
-            text-align: center;
-            padding: 1.5rem;
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            border-top: 1px solid var(--border);
-        }
-    </style>
-</head>
-<body>
-    <header>
-        <div class="brand">VisionGuard</div>
-        <nav class="nav-links">
-            <a href="/">Upload</a>
-            <a href="/history">History</a>
-            <a href="/health" target="_blank">Health</a>
-        </nav>
-    </header>
+{% extends "base.html" %}
 
-    <main>
-        <div class="card">
-            <h1>Classify Image</h1>
-            <p class="subtitle">Upload an image to determine whether it is an authentic photograph or AI-generated.</p>
+{% block title %}VisionGuard — AI vs Real Image Classification{% endblock %}
 
-            <form action="/predict" method="POST" enctype="multipart/form-data">
-                <div class="dropzone" onclick="document.getElementById('file-upload').click()">
-                    <div class="icon">&#128247;</div>
-                    <p style="font-weight: 600; margin-bottom: 0.25rem;">Click to select an image</p>
-                    <p style="font-size: 0.8rem; color: var(--text-muted);">In-memory inference &middot; No disk storage</p>
-                    <input type="file" id="file-upload" name="file" class="file-input" accept=".jpg,.jpeg,.png" onchange="showFilename(this)">
-                    <div id="selected-filename" class="file-name"></div>
-                </div>
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h1 class="card-title">Classify Artwork</h1>
+        <p class="card-subtitle">
+            Upload an image to determine whether it is an authentic human creation or generated by an Artificial Intelligence model.
+        </p>
+    </div>
 
-                <div class="badges">
-                    <span class="badge">JPG / JPEG / PNG</span>
-                    <span class="badge">Max 5MB</span>
-                    <span class="badge">224 &times; 224 Input</span>
-                </div>
-
-                <button type="submit" class="btn">Classify Image</button>
-            </form>
+    <form id="upload-form" action="/predict" method="POST" enctype="multipart/form-data">
+        <!-- Interactive Drag-and-Drop Zone -->
+        <div id="dropzone" class="dropzone">
+            <input type="file" id="file-input" name="file" class="file-input-hidden" accept=".jpg,.jpeg,.png">
+            <span class="dropzone-icon">&#128247;</span>
+            <div class="dropzone-title">Drag & drop your artwork here</div>
+            <div class="dropzone-desc">or click anywhere to browse local files</div>
         </div>
-    </main>
 
-    <footer>
-        VisionGuard &middot; MLOps Assignment 2 &middot; Flask & TensorFlow Production Service
-    </footer>
+        <!-- Selected File Preview Container (revealed on file pick) -->
+        <div id="file-preview-card" class="selected-file-box">
+            <img id="preview-thumbnail" class="selected-file-thumbnail" src="" alt="Thumbnail preview">
+            <div class="selected-file-info">
+                <div id="file-name-label" class="selected-file-name">filename.jpg</div>
+                <div id="file-size-label" class="selected-file-meta">0.00 MB</div>
+            </div>
+            <button type="button" id="clear-file-btn" style="background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.1rem;" title="Remove selection">&times;</button>
+        </div>
 
-    <script>
-        function showFilename(input) {
-            const display = document.getElementById('selected-filename');
-            if (input.files && input.files[0]) {
-                display.innerText = 'Selected: ' + input.files[0].name;
-            } else {
-                display.innerText = '';
-            }
+        <!-- Security & Architecture Feature Badges -->
+        <div class="badge-group" style="margin-top: 1.25rem;">
+            <span class="badge">&#128444; JPG / JPEG / PNG</span>
+            <span class="badge">&#9878; Max 5MB Limit</span>
+            <span class="badge">&#9889; 224&times;224 RGB Pipeline</span>
+            <span class="badge">&#128274; 100% In-Memory (Zero Disk I/O)</span>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" id="submit-btn" class="btn btn-primary">
+            <span>Analyze Artwork</span>
+            <span>&rarr;</span>
+        </button>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const dropzone = document.getElementById('dropzone');
+    const fileInput = document.getElementById('file-input');
+    const previewCard = document.getElementById('file-preview-card');
+    const previewThumbnail = document.getElementById('preview-thumbnail');
+    const fileNameLabel = document.getElementById('file-name-label');
+    const fileSizeLabel = document.getElementById('file-size-label');
+    const clearFileBtn = document.getElementById('clear-file-btn');
+    const uploadForm = document.getElementById('upload-form');
+    const submitBtn = document.getElementById('submit-btn');
+
+    // Drag-and-drop visual indicators
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropzone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropzone.classList.add('dragover');
+        }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropzone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropzone.classList.remove('dragover');
+        }, false);
+    });
+
+    // Handle dropped files
+    dropzone.addEventListener('drop', (e) => {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        if (files && files.length > 0) {
+            fileInput.files = files;
+            displaySelectedFile(files[0]);
         }
-    </script>
-</body>
-</html>
+    });
 
+    // Handle file picker selection
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files.length > 0) {
+            displaySelectedFile(e.target.files[0]);
+        }
+    });
+
+    function displaySelectedFile(file) {
+        if (!file) return;
+
+        fileNameLabel.textContent = file.name;
+        const sizeMb = (file.size / (1024 * 1024)).toFixed(2);
+        fileSizeLabel.textContent = `${sizeMb} MB &middot; ${file.type || 'image'}`;
+
+        // Create in-memory object URL for instant client-side thumbnail preview
+        const objectUrl = URL.createObjectURL(file);
+        previewThumbnail.src = objectUrl;
+        previewCard.style.display = 'flex';
+    }
+
+    // Clear selection
+    clearFileBtn.addEventListener('click', () => {
+        fileInput.value = '';
+        previewCard.style.display = 'none';
+        previewThumbnail.src = '';
+    });
+
+    // Loading indicator on submission
+    uploadForm.addEventListener('submit', (e) => {
+        if (!fileInput.files || fileInput.files.length === 0) {
+            e.preventDefault();
+            alert('Please select an image file before analyzing.');
+            return;
+        }
+        submitBtn.disabled = true;
+        submitBtn.style.opacity = '0.75';
+        submitBtn.innerHTML = '<span>Processing in Memory...</span>';
+    });
+</script>
+{% endblock %}

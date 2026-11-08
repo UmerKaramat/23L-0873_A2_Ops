@@ -1,149 +1,33 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Validation Error — VisionGuard</title>
-    <style>
-        :root {
-            --danger: #dc2626;
-            --danger-bg: #fef2f2;
-            --danger-border: #fecaca;
-            --bg: #f8fafc;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-            --border: #e2e8f0;
-            --radius: 12px;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg);
-            color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        header {
-            background: #ffffff;
-            border-bottom: 1px solid var(--border);
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .brand { font-size: 1.25rem; font-weight: 700; color: #2563eb; }
-        .nav-links a {
-            color: var(--text-muted);
-            text-decoration: none;
-            margin-left: 1.5rem;
-            font-weight: 500;
-        }
-        .nav-links a:hover { color: #2563eb; }
-        main {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem 1rem;
-        }
-        .card {
-            background: #ffffff;
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 2.5rem;
-            max-width: 520px;
-            width: 100%;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-            text-align: center;
-        }
-        .error-icon { font-size: 3rem; margin-bottom: 1rem; color: var(--danger); }
-        h1 { font-size: 1.5rem; color: var(--danger); margin-bottom: 0.75rem; }
-        .rule-badge {
-            display: inline-block;
-            background: #fee2e2;
-            color: #991b1b;
-            font-size: 0.8rem;
-            font-weight: 700;
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            margin-bottom: 1.25rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-        .message-box {
-            background: var(--danger-bg);
-            border: 1px solid var(--danger-border);
-            border-radius: 8px;
-            padding: 1.25rem;
-            color: #7f1d1d;
-            font-size: 0.95rem;
-            line-height: 1.5;
-            margin-bottom: 1.75rem;
-            text-align: left;
-        }
-        .rule-list {
-            margin-top: 0.75rem;
-            padding-left: 1.25rem;
-            font-size: 0.85rem;
-            color: #991b1b;
-        }
-        .rule-list li { margin-bottom: 0.25rem; }
-        .btn {
-            display: inline-block;
-            background: #2563eb;
-            color: white;
-            text-decoration: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            transition: background 0.2s;
-            width: 100%;
-        }
-        .btn:hover { background: #1d4ed8; }
-        footer {
-            text-align: center;
-            padding: 1.5rem;
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            border-top: 1px solid var(--border);
-        }
-    </style>
-</head>
-<body>
-    <header>
-        <div class="brand">VisionGuard</div>
-        <nav class="nav-links">
-            <a href="/">Upload</a>
-            <a href="/history">History</a>
-            <a href="/health" target="_blank">Health</a>
-        </nav>
-    </header>
+{% extends "base.html" %}
 
-    <main>
-        <div class="card">
-            <div class="error-icon">&#9888;</div>
-            <h1>Validation Error</h1>
-            <div class="rule-badge">Rule Violated: {{ rule_violated or 'Security / Format Constraint' }}</div>
+{% block title %}Validation Error — VisionGuard{% endblock %}
 
-            <div class="message-box">
-                <p><strong>Error Details:</strong></p>
-                <p style="margin-top: 0.35rem;">{{ error_message }}</p>
-                <ul class="rule-list">
-                    <li><strong>Permitted formats:</strong> .jpg, .jpeg, .png</li>
-                    <li><strong>Maximum file size:</strong> 5 MB</li>
-                    <li><strong>Integrity:</strong> Must be a readable, uncorrupted image file</li>
-                </ul>
-            </div>
+{% block content %}
+<div class="card" style="text-align: center;">
+    <div class="error-icon">&#9888;&#65039;</div>
+    <h1 class="card-title" style="color: var(--ai-color); margin-bottom: 0.75rem;">Validation Error</h1>
 
-            <a href="/" class="btn">&larr; Return to Upload Form</a>
+    <!-- Rule Violated Badge (Matches test parser regex: Rule Violated:\s*([^<]+)) -->
+    <div class="rule-badge">Rule Violated: {{ rule_violated or 'Security / Format Constraint' }}</div>
+
+    <!-- Error Details Box (Matches test parser regex: <p style="margin-top:\s*0\.35rem;\">(.*?)</p>) -->
+    <div class="error-details-box">
+        <div class="error-details-title">Error Details:</div>
+        <p style="margin-top: 0.35rem; color: #f87171; font-weight: 500;">{{ error_message }}</p>
+
+        <div style="margin-top: 1.25rem; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted);">
+            Enforced Security Policies:
         </div>
-    </main>
+        <ul class="rule-guide-list">
+            <li><strong>Permitted Formats:</strong> .jpg, .jpeg, .png</li>
+            <li><strong>File Size Threshold:</strong> Maximum 5 MB per payload</li>
+            <li><strong>Data Integrity:</strong> File must be non-empty and decodable as a valid RGB raster image</li>
+            <li><strong>Privacy Guarantee:</strong> Uploads are processed in RAM and never written to disk</li>
+        </ul>
+    </div>
 
-    <footer>
-        VisionGuard &middot; MLOps Assignment 2 &middot; Strict In-Memory Request Validation
-    </footer>
-</body>
-</html>
-
+    <a href="/" class="btn btn-primary">
+        <span>&larr; Return to Upload Form</span>
+    </a>
+</div>
+{% endblock %}

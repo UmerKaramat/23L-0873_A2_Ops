@@ -144,8 +144,10 @@ def run_database_tests():
     print("-" * 82)
     print(f"{'1. SQLite Connection & Schema':<38} | {'PASSED':<10} | {'Table inference_records ok':<28}")
     print(f"{'2. Predict Route Auto-Commit':<38} | {'PASSED':<10} | {f'Record #{audit_id} persisted':<28}")
-    print(f"{'3. History Dynamic Retrieval':<38} | {'PASSED':<10} | {f'Total: {post_metrics.get(\"total_inferences\")} records':<28}")
-    print(f"{'4. Aggregate Metrics Computation':<38} | {'PASSED':<10} | {f'AI: {post_metrics.get(\"pct_ai\")}%, Real: {post_metrics.get(\"pct_real\")}%':<28}")
+    retrieval_msg = f"Total: {post_metrics.get('total_inferences')} records"
+    metrics_msg = f"AI: {post_metrics.get('pct_ai')}%, Real: {post_metrics.get('pct_real')}%"
+    print(f"{'3. History Dynamic Retrieval':<38} | {'PASSED':<10} | {retrieval_msg:<28}")
+    print(f"{'4. Aggregate Metrics Computation':<38} | {'PASSED':<10} | {metrics_msg:<28}")
     print("=" * 82)
     print("Database audit trail is fully operational, persistent, and dynamically rendered.\n")
 

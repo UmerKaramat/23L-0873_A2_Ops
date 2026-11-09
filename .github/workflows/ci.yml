@@ -28,4 +28,4 @@ jobs:
         run: |
           mkdir -p models
           touch models/champion.keras
-          docker build -t visionguard-web
+          docker build -t visionguard-web .

@@ -122,7 +122,7 @@ models/*
 
 # Large model binary extensions across the workspace
 *.h5
-*.keras
+
 *.tflite
 *.onnx
 *.pt

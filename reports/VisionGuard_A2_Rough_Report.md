@@ -665,15 +665,42 @@
     *Caption:* `docker ps` output displaying `visionguard-app` status `Up (healthy)` on port 5000.
 
 ### Subtask 6.2: Docker Compose Multi-Service Setup (`web` and `database`)
-- **Objective:** Configure `docker-compose.yml` to orchestrate two connected services: `web` (Flask application) and `database` with volume persistence.
-- **Details & Observations:**
-  - `[Document service definitions, environment variable management, volume mapping, and container network link]`
+- **Objective:** Configure `docker-compose.yml` to orchestrate a production multi-container topology comprising an isolated PostgreSQL database (`db`) and the Flask/Waitress web service (`web`), connected via an internal bridge network with data persistence and health-dependent startup sequencing.
+- **Key Architectural & Security Features:**
+  - **Service 1 (`db` - PostgreSQL 15 Alpine):**
+    - Uses `postgres:15-alpine` for a minimal container footprint.
+    - Persists database data across lifecycle resets using the named volume `pgdata:/var/lib/postgresql/data`.
+    - Configured with `healthcheck` probing `pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}` every 5 seconds.
+    - **Zero External Port Exposure (Rubric Requirement):** The `db` service publishes **no ports** to the host machine (`ports:` omitted), strictly isolating the database from external ingress traffic and making it accessible exclusively to the `web` container over the internal bridge network.
+  - **Service 2 (`web` - Flask & Waitress WSGI):**
+    - Builds dynamically from root `Dockerfile`.
+    - Publishes port `5000:5000` for public client and API traffic.
+    - Connects to PostgreSQL over the internal bridge network via `DATABASE_URI=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}`.
+    - Enforces startup ordering via `depends_on` with `condition: service_healthy`, ensuring the web service only starts after PostgreSQL passes its healthcheck.
+  - **Internal Network Isolation:** Both services communicate over `visionguard-net` (bridge driver).
+  - **Secrets & Configuration:** Parameters externalized to `.env` with a reference template provided in `.env.example`.
+- **Execution Commands:**
+  ```powershell
+  # Step 1: Start the multi-container stack in detached mode
+  docker compose up -d --build
+
+  # Step 2: Verify service health and port isolation
+  docker compose ps
+
+  # Step 3: Inspect web and database logs
+  docker compose logs -f
+  ```
 - **Screenshots & Evidence:**
-  - *Figure 6.2:* Docker Compose multi-service execution
+  - *Figure 6.2a:* Docker Compose multi-service startup log
     ```text
-    ![Figure 6.2: docker-compose up logs](figures/task6_2_docker_compose.png)
+    ![Figure 6.2a: docker-compose up logs](figures/task6_2_docker_compose.png)
     ```
-    *Caption:* Output of `docker-compose up` displaying simultaneous, healthy startup of `web` and `database` containers.
+    *Caption:* Output of `docker compose up -d --build` displaying health-dependent startup of `visionguard-db` and `visionguard-web`.
+  - *Figure 6.2b:* Container network and port isolation verification
+    ```text
+    ![Figure 6.2b: Docker Compose port verification](figures/task6_2_port_isolation.png)
+    ```
+    *Caption:* `docker compose ps` verifying that only port 5000 on the web service is published, with the database service exposing zero external ports.
 
 ### Subtask 6.3: Continuous Integration (CI) with GitHub Actions
 - **Objective:** Configure a GitHub Actions workflow (`.github/workflows/ci.yml`) to automate code linting, environment setup, and test execution on push/PR.

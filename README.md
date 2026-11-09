@@ -1,3 +1,8 @@
+[![VisionGuard CI](https://github.com/UmerKaramat/23L-0873_A2_Ops/actions/workflows/ci.yml/badge.svg)](https://github.com/UmerKaramat/23L-0873_A2_Ops/actions/workflows/ci.yml)
+
+
+
+
 # VisionGuard: AI vs Real Image Classification and Deployment
 
 > **Project Status:** Under Active Development  

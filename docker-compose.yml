@@ -34,7 +34,7 @@ services:
     # 'visionguard-net' bridge (i.e. 'web') can connect to it via port 5432.
     # ==========================================================================
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-appuser} -d ${POSTGRES_DB:-visionguard}"]
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-appuser} -d ${POSTGRES_DB:-visionguard}" ]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -53,7 +53,7 @@ services:
       - .env
     environment:
       # Connects to PostgreSQL using internal service name 'db' on port 5432
-      DATABASE_URI: postgresql://${POSTGRES_USER:-appuser}:${POSTGRES_PASSWORD:-supersecret}@db:5432/${POSTGRES_DB:-visionguard}
+      DATABASE_URI: postgresql+psycopg2://${POSTGRES_USER:-appuser}:${POSTGRES_PASSWORD:-supersecret}@db:5432/${POSTGRES_DB:-visionguard}
       MODEL_PATH: models/champion.keras
       CONFIDENCE_THRESHOLD: 0.5
       FLASK_ENV: production
@@ -79,4 +79,3 @@ volumes:
   pgdata:
     driver: local
     name: visionguard-pgdata
-

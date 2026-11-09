@@ -23,8 +23,19 @@ load_dotenv(PROJECT_ROOT / ".env")
 # Environment Configurations
 MODEL_PATH = os.getenv("MODEL_PATH", str(PROJECT_ROOT / "models" / "champion.keras"))
 CONFIDENCE_THRESHOLD = float(os.getenv("CONFIDENCE_THRESHOLD", "0.5"))
-DATABASE_URI = os.getenv("DATABASE_URI", f"sqlite:///{PROJECT_ROOT / 'data' / 'visionguard.db'}")
 FLASK_ENV = os.getenv("FLASK_ENV", "production")
+
+# Safe Database URI resolution (fall back to SQLite if host 'db' or invalid config is detected)
+raw_db_uri = os.getenv("DATABASE_URI", "")
+if not raw_db_uri or "@db:" in raw_db_uri or "://db/" in raw_db_uri or raw_db_uri.startswith("sqlite:///"):
+    if raw_db_uri.startswith("sqlite:///"):
+        db_relative_path = raw_db_uri.replace("sqlite:///", "")
+    else:
+        db_relative_path = "data/visionguard.db"
+    db_path = PROJECT_ROOT / db_relative_path if not Path(db_relative_path).is_absolute() else Path(db_relative_path)
+    DATABASE_URI = f"sqlite:///{db_path.as_posix()}"
+else:
+    DATABASE_URI = raw_db_uri
 
 PROJECT_ROOT = Path(__file__).resolve().parent
 if str(PROJECT_ROOT) not in sys.path:
@@ -55,7 +66,7 @@ app.config["ENV"] = "production"
 app.config["MAX_CONTENT_LENGTH"] = MAX_FILE_SIZE_BYTES
 app.config["JSON_SORT_KEYS"] = False
 
-# Database Configuration
+# Database Configuration Binding
 if DATABASE_URI.startswith("sqlite:///"):
     db_relative_path = DATABASE_URI.replace("sqlite:///", "")
     db_path = PROJECT_ROOT / db_relative_path if not Path(db_relative_path).is_absolute() else Path(db_relative_path)

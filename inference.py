@@ -9,9 +9,10 @@ Provides an optimized, in-memory inference service for VisionGuard:
    - CONFIDENCE_THRESHOLD: Decision boundary probability for AI-Generated class (default: 0.5).
 2. Loads the model EXACTLY ONCE using a Singleton pattern (ChampionModelSingleton)
    so it persists in RAM across requests with zero disk reload latency.
-3. Accepts raw image bytes (as received from web uploads or API requests).
-4. Preprocesses the image: decodes to RGB, resizes to 224x224, and normalizes pixel intensities.
-5. Returns a dictionary with predicted 'label' ('Real' or 'AI-Generated'), 'confidence' percentage,
+3. Automatically attempts to download the model file if missing on cloud environments (like Railway).
+4. Accepts raw image bytes (as received from web uploads or API requests).
+5. Preprocesses the image: decodes to RGB, resizes to 224x224, and normalizes pixel intensities.
+6. Returns a dictionary with predicted 'label' ('Real' or 'AI-Generated'), 'confidence' percentage,
    and raw probability.
 """
 
@@ -22,12 +23,13 @@ from dotenv import load_dotenv
 import numpy as np
 from PIL import Image
 import tensorflow as tf
+import urllib.request
 
 # Load environment variables from .env
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 load_dotenv(PROJECT_ROOT / ".env")
 
-# Environment Variable Configurations (Task 4.4)
+# Environment Variable Configurations
 DEFAULT_MODEL_PATH = os.getenv("MODEL_PATH", str(PROJECT_ROOT / "models" / "champion.keras"))
 DEFAULT_CONFIDENCE_THRESHOLD = float(os.getenv("CONFIDENCE_THRESHOLD", "0.5"))
 
@@ -51,20 +53,33 @@ class ChampionModelSingleton:
                 path = PROJECT_ROOT / path
 
             if not path.exists():
-                # Check known fallbacks if champion.keras hasn't been created yet
-                fallbacks = [
-                    PROJECT_ROOT / "models" / "transfer_mobilenet_best.keras",
-                    PROJECT_ROOT / "models" / "custom_cnn_best.keras"
-                ]
-                for fb in fallbacks:
-                    if fb.exists():
-                        path = fb
-                        break
-                else:
-                    raise FileNotFoundError(
-                        f"Champion model not found at '{path}'. "
-                        "Please run 'python scripts/run_task3_6_registry.py' to generate models/champion.keras."
-                    )
+                path.parent.mkdir(parents=True, exist_ok=True)
+                print(f"[Inference Engine] Model not found locally at {path}. Attempting cloud download...")
+                
+                # TODO: Replace with your direct public file download link (e.g. GitHub release asset URL or Hugging Face raw file link)
+                MODEL_DOWNLOAD_URL = os.getenv("MODEL_DOWNLOAD_URL", "YOUR_PUBLIC_MODEL_DIRECT_URL")
+                
+                try:
+                    urllib.request.urlretrieve(MODEL_DOWNLOAD_URL, str(path))
+                    print("[Inference Engine] Model downloaded successfully from cloud storage.")
+                except Exception as dl_err:
+                    print(f"[Inference Engine] Cloud download failed: {dl_err}")
+
+                # Fallback to alternative local models if download fails or URL isn't set yet
+                if not path.exists():
+                    fallbacks = [
+                        PROJECT_ROOT / "models" / "transfer_mobilenet_best.keras",
+                        PROJECT_ROOT / "models" / "custom_cnn_best.keras"
+                    ]
+                    for fb in fallbacks:
+                        if fb.exists():
+                            path = fb
+                            break
+                    else:
+                        raise FileNotFoundError(
+                            f"Champion model not found at '{path}'. "
+                            "Please provide a valid direct download URL or place champion.keras inside models/"
+                        )
 
             print(f"[Inference Engine] Loading champion model from: {path.resolve()}...")
             cls._model = tf.keras.models.load_model(path)

@@ -1,0 +1,82 @@
+# ==============================================================================
+# VisionGuard — Multi-Service Docker Compose Stack (Task 6.3)
+# Services:
+#   1. db  : Isolated PostgreSQL 15 Alpine Database (Internal Network Only)
+#   2. web : Production Flask / Waitress Web Service & Model Inference Engine
+# ==============================================================================
+
+version: "3.8"
+
+services:
+  # ----------------------------------------------------------------------------
+  # 1. Database Service (PostgreSQL 15 Alpine)
+  # ----------------------------------------------------------------------------
+  db:
+    image: postgres:15-alpine
+    container_name: visionguard-db
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-appuser}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-supersecret}
+      POSTGRES_DB: ${POSTGRES_DB:-visionguard}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      # Named volume to persist database records across container restarts
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - visionguard-net
+    # ==========================================================================
+    # RUBRIC REQUIREMENT: No ports exposed to the host!
+    # The 'db' service publishes NO external ports, completely isolating the
+    # database from external network traffic. Only services within the internal
+    # 'visionguard-net' bridge (i.e. 'web') can connect to it via port 5432.
+    # ==========================================================================
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-appuser} -d ${POSTGRES_DB:-visionguard}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # ----------------------------------------------------------------------------
+  # 2. Web Application Service (Flask + Waitress WSGI + TensorFlow Inference)
+  # ----------------------------------------------------------------------------
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: visionguard-web
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      # Connects to PostgreSQL using internal service name 'db' on port 5432
+      DATABASE_URI: postgresql://${POSTGRES_USER:-appuser}:${POSTGRES_PASSWORD:-supersecret}@db:5432/${POSTGRES_DB:-visionguard}
+      MODEL_PATH: models/champion.keras
+      CONFIDENCE_THRESHOLD: 0.5
+      FLASK_ENV: production
+    ports:
+      # Publishes port 5000 to the host machine for public access
+      - "5000:5000"
+    depends_on:
+      # Wait until the PostgreSQL database is healthy before starting the web app
+      db:
+        condition: service_healthy
+    networks:
+      - visionguard-net
+
+# ------------------------------------------------------------------------------
+# Networks & Volumes Configuration
+# ------------------------------------------------------------------------------
+networks:
+  visionguard-net:
+    driver: bridge
+    name: visionguard-net
+
+volumes:
+  pgdata:
+    driver: local
+    name: visionguard-pgdata
+

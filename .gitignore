@@ -146,3 +146,5 @@ models/*
 !*.dvc
 !.dvc/config
 !.dvc/.gitignore
+
+.vercel
